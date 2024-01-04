@@ -1,0 +1,92 @@
+<template>
+  <div>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-logo">
+        <div>
+          <img src="../assets/TENTILHO.png" width="180" height="60" />
+        </div>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <router-link 
+                v-if="showLoginButton"
+                :to="{ path: '/Login' }"
+                class="button is-light"
+              >
+                  Login
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <router-view></router-view>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+
+export default defineComponent({
+  name: "PageCadastroUsuario",
+  setup() {
+    const showLoginButton = ref(true);
+    const route = useRoute();
+
+    watch(
+      () => route.path,
+      (to) => {
+        // Esconder o botão de login na página de login e de cadastro
+        showLoginButton.value = to !== "/Login" && to !== "/CadastroUsuario";
+      },
+      { immediate: true }
+    );
+
+    return { showLoginButton };
+  },
+  methods: {
+    login() {
+      // Implemente sua lógica de login aqui
+    },
+    moveToRegister() {
+      // Implemente sua lógica de navegação para a página de registro aqui
+    },
+  },
+});
+</script>
+
+<style scoped>
+.navbar {
+  background: #519bc4;
+  height: 50px;
+}
+.navbar-logo {
+  display: flex;
+  justify-content: center;
+  margin-left: 20px;
+}
+.navbar-logo img {
+  height: auto;
+  max-width: 80%;
+}
+
+.navbar-menu {
+  margin-right: 20px;
+}
+</style>
