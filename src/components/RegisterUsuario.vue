@@ -6,13 +6,18 @@
         <div class="field">
           <label class="label" for="name">Nome completo</label>
           <div class="control">
-            <input class="input is-small" type="text" name="name" placeholder="Nome completo" />
+            <input
+              class="input is-small"
+              type="text"
+              name="name"
+              placeholder="Nome completo"
+            />
           </div>
         </div>
 
         <div class="field">
           <label class="label" for="email">Email</label>
-          <div class="control ">
+          <div class="control">
             <input
               class="input is-small"
               type="text"
@@ -46,7 +51,9 @@
           </div>
         </div>
 
-        <div class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2">
+        <div
+          class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2"
+        >
           <label class="label" for="Tipo-usuario"> Tipo de usuario </label>
           <select>
             <option>Compositor</option>
@@ -55,7 +62,9 @@
         </div>
 
         <div class="control">
-          <div class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2">
+          <div
+            class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2"
+          >
             <label class="label" for="Tipo-usuario"> Genero musical </label>
             <select :v-model="selectedGenre">
               <option v-for="genre in genres" :key="genre.id" :value="genre.name">
@@ -77,10 +86,8 @@
           type="submit"
           class="mt-4 is-flex is-align-items-cente button is-primary"
           id="registration_button"
-          
         >
           <RouterLink to="/Login">Cadastrar</RouterLink>
-          
         </button>
       </form>
     </div>
@@ -97,11 +104,11 @@ export default defineComponent({
   data() {
     return {
       genres: [
-        { id: 1, name: 'Generos' },
-        { id: 2, name: 'Pop' },
-        { id: 3, name: 'Hip Hop' },
-        { id: 4, name: 'Eletrônica' },
-        { id: 5, name: 'Jazz' },
+        { id: 1, name: "Generos" },
+        { id: 2, name: "Pop" },
+        { id: 3, name: "Hip Hop" },
+        { id: 4, name: "Eletrônica" },
+        { id: 5, name: "Jazz" },
       ],
       selectedGenre: 1,
     };
@@ -119,7 +126,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .background-register {
   background-color: #04314afd;
   position: fixed;

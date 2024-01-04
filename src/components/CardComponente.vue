@@ -3,9 +3,9 @@
     <div class="columns is-multiline is-flex">
       <div v-for="card in cards" :key="card.id" class="card-box column is-one-fifth">
         <router-link :to="card.link" class="card-content title-card">
-          <figure class="image is-5by4">
+          <div class="image is-5by4">
             <img :src="card.imageSrc" alt="Card Image" />
-          </figure>
+          </div>
           <h2>{{ card.title }}</h2>
         </router-link>
       </div>
@@ -72,9 +72,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.card-content {
+  padding: 0;
+}
+
 .cards-lists {
   display: flex;
-  height: auto;
+  height: 20px;
   /* ou outro valor conforme necessário */
 }
 

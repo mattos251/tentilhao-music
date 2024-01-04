@@ -39,11 +39,11 @@
 
       <div class="form-page">
         <h6>Genero musical</h6>
-
         <div class="select">
-          <select>
-            <option>Select dropdown</option>
-            <option>With options</option>
+          <select :v-model="selectedGenre">
+            <option v-for="genre in genres" :key="genre.id" :value="genre.name">
+              {{ genre.name }}
+            </option>
           </select>
         </div>
       </div>
@@ -51,20 +51,18 @@
       <div>
         <textarea class="text-area" placeholder="e.g. Hello world"></textarea>
         <label class="checkbox">
-          <input type="checkbox">
+          <input type="checkbox" />
           I agree to the <a href="#">terms and conditions</a>
         </label>
       </div>
 
-      <div>
-        <router-link to="/"> 
-          <button class="button is-responsive envio-formulario">
+      <div class="is-flex is is-justify-content-center">
+        <router-link to="/perfil">
+          <button class="button is-fullwidth is-responsive envio-formulario">
             Envia
           </button>
         </router-link>
       </div>
-
-
     </div>
   </div>
 </template>
@@ -74,13 +72,22 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CadastroComposicao",
+  data() {
+    return {
+      genres: [
+        { id: 1, name: "Generos" },
+        { id: 2, name: "Pop" },
+        { id: 3, name: "Hip Hop" },
+        { id: 4, name: "Eletrônica" },
+        { id: 5, name: "Jazz" },
+      ],
+      selectedGenre: 1,
+    };
+  },
 });
 </script>
 
 <style scoped>
-
-
-
 .form {
   display: flex;
   justify-content: center;
@@ -88,7 +95,7 @@ export default defineComponent({
 .content {
   margin-top: 10px;
   padding: 10px;
-  width: 40%;
+  width: 50%;
   background: #81c6eb;
   border-radius: 20px;
 }
@@ -97,7 +104,7 @@ export default defineComponent({
   justify-content: center;
   color: white;
 }
-.content h6{
+.content h6 {
   color: white;
 }
 
@@ -105,24 +112,31 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  width: 100%;
 }
 
-.input,
-.textarea {
-  box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
+.text-area {
   max-width: 100%;
-  width: 70%;
+  width: 100%;
+  border-radius: 5px;
+  height: 80px;
+  /* background: #deedf5; */
+  border: 1px solid white;
 }
-
-.file-input{
-    width:90%;
-}
-
-.envio-formulario{
-  width: 80%;
-  margin-top:10px;
+.envio-formulario {
+  margin-top: 10px;
   background: #003857;
   color: white;
-  display: flex;
+}
+
+.file-cta {
+  background-color: white;
+  color: #003857;
+  width: 200px;
+}
+select {
+  background-color: white;
+  color: #003857;
+  width: 200px;
 }
 </style>
