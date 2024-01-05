@@ -35,7 +35,7 @@ import PlayerMusic from "@/components/PlayerMusic.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "PaginaGeneros",
+  name: "PaginaFeed",
   components: {
     NavbarNavigation,
     BanerIdentidade,

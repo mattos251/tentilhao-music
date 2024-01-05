@@ -3,7 +3,7 @@ import CadastroComposicao from './views/CadastroComposicao.vue';
 import HomePage from './views/HomePage.vue';
 import PaginaPerfil from './views/PaginaPerfil.vue';
 import PaginaPrincipal from './views/PaginaPrincipal.vue';
-import PaginaGeneros from './views/PaginaGeneros.vue';
+import PaginaFeed from './views/PaginaFeed.vue';
 import PageCadastroUsuario from './views/PageCadastroUsuario.vue';
 import RegisterUsuario from './components/RegisterUsuario.vue';
 import LoginUsuario from './components/LoginUsuario.vue'
@@ -51,12 +51,23 @@ const routes = [
     {
         path: '/perfil',
         name: 'PaginaPerfil',
-        component: PaginaPerfil
+        component: PaginaPerfil,
+        children:[
+            
+            {
+                path: '/:compositorId',
+                name: 'PaginaPerfil',
+                component: PaginaPerfil,
+            },
+  
+        ]
+
     },
+
     {
         path: '/feeds',
-        name: 'PaginaGeneros',
-        component: PaginaGeneros
+        name: 'PaginaFeed',
+        component: PaginaFeed
     },
 ]
 
