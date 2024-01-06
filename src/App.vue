@@ -1,24 +1,13 @@
 <template>
-
   <div>
-    <router-view to="/"> </router-view >
+    <router-view></router-view>
   </div>
-
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-// import NavbarNavigation from './components/NavbarNavigation.vue'
-// import SidbarNavigation from './components/SidbarNavigation.vue'
-
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'App',
-  components:{
-
-  }
-}
-
-);
+  name: "App",
+});
 </script>
-
