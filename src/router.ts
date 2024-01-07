@@ -7,6 +7,7 @@ import PaginaFeed from './views/PaginaFeed.vue';
 import PageCadastroUsuario from './views/PageCadastroUsuario.vue';
 import RegisterUsuario from './components/RegisterUsuario.vue';
 import LoginUsuario from './components/LoginUsuario.vue'
+import auth  from './auth';
 
 const routes = [
     
@@ -33,6 +34,7 @@ const routes = [
         path: '/homepage',
         name: 'PaginaPrincipal',
         component: PaginaPrincipal,
+        meta: { requiresAuth: true },
         children:[
             {
                 path: '/homepage',
@@ -40,6 +42,7 @@ const routes = [
                 component: HomePage,
             },
 
+            
             {
                 path: '/cadastro',
                 name: 'CadastroComposicao',
@@ -47,27 +50,26 @@ const routes = [
             },
         ]
     },
-
+    {
+        path: '/feeds',
+        name: 'PaginaFeed',
+        component: PaginaFeed,
+        meta: { requiresAuth: true },
+    },
+    
     {
         path: '/perfil',
         name: 'PaginaPerfil',
         component: PaginaPerfil,
+        meta: { requiresAuth: true },
         children:[
-            
             {
                 path: '/:compositorId',
                 name: 'PaginaPerfil',
                 component: PaginaPerfil,
             },
-  
         ]
 
-    },
-
-    {
-        path: '/feeds',
-        name: 'PaginaFeed',
-        component: PaginaFeed
     },
 ]
 
@@ -75,6 +77,21 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach((to, from, next) => {
+  // Verifique se a rota requer autenticação
+  if (to.matched.some(route => route.meta.requiresAuth)) {
+    // Verifique se o usuário está autenticado
+    if (auth.checkAuth()) {
+      next(); // Permite a navegação
+    } else {
+      next('/login'); // Redireciona para a página de login se não estiver autenticado
+    }
+  } else {
+    next(); // Para rotas que não exigem autenticação
+  }
+});
+
 
 
 export default router;
