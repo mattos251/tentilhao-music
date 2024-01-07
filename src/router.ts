@@ -79,18 +79,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // Verifique se a rota requer autenticação
-  if (to.matched.some(route => route.meta.requiresAuth)) {
-    // Verifique se o usuário está autenticado
-    if (auth.checkAuth()) {
-      next(); // Permite a navegação
-    } else {
-      next('/login'); // Redireciona para a página de login se não estiver autenticado
-    }
+  const requiresAuth = to.matched.some(route => route.meta.requiresAuth);
+
+  if (requiresAuth && !auth.checkAuth()) {
+    next('/login');
   } else {
-    next(); // Para rotas que não exigem autenticação
+    next();
   }
 });
+
 
 
 
