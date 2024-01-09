@@ -1,7 +1,7 @@
 <template>
   <div class="background-register mt-4">
     <div class="box-register container box">
-      <form @submit.prevent="login">
+      <form @submit.prevent="registerUser">
         <h1 class="mb-3">Cadastro</h1>
         <div class="field">
           <label class="label" for="name">Nome completo</label>
@@ -9,7 +9,7 @@
             <input
               class="input is-small"
               type="text"
-              name="name"
+              v-model="name"
               placeholder="Nome completo"
             />
           </div>
@@ -21,7 +21,7 @@
             <input
               class="input is-small"
               type="text"
-              name="email"
+              v-model="email"
               placeholder="email@address.com"
             />
           </div>
@@ -33,7 +33,7 @@
             <input
               class="input is-small"
               type="tel"
-              name="telefone"
+              v-model="telefone"
               placeholder="Numero para contato"
             />
           </div>
@@ -45,7 +45,7 @@
             <input
               class="input is-small"
               type="password"
-              name="password"
+              v-model="password"
               placeholder="password123"
             />
           </div>
@@ -55,7 +55,7 @@
           class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2"
         >
           <label class="label" for="Tipo-usuario"> Tipo de usuario </label>
-          <select>
+          <select v-model="userType">
             <option>Compositor</option>
             <option>Produtor</option>
           </select>
@@ -66,7 +66,7 @@
             class="select is-small is-flex is-align-items-center is-justify-content-space-between mb-2"
           >
             <label class="label" for="Tipo-usuario"> Genero musical </label>
-            <select :v-model="selectedGenre">
+            <select v-model="selectedGenre">
               <option v-for="genre in genres" :key="genre.id" :value="genre.name">
                 {{ genre.name }}
               </option>
@@ -77,32 +77,49 @@
         <div class="alternative-option mt-4">
           <div>
             <label class="checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" v-model="agreeTerms" />
               I agree to the <a href="#">terms and conditions</a>
             </label>
           </div>
         </div>
+
         <button
+          v-if="!successMessage"
           type="submit"
           class="mt-4 is-flex is-align-items-cente button is-primary"
           id="registration_button"
         >
-          <RouterLink to="/Login">Cadastrar</RouterLink>
+          Cadastrar
         </button>
       </form>
+
+      <div v-if="errorMessage" class="notification is-danger mt-4">
+        {{ errorMessage }}
+      </div>
+      <div v-if="successMessage" class="notification is-success mt-4">
+        {{ successMessage }}
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-// import { mdiGeneratorStationary } from "@mdi/js";
 import { defineComponent } from "vue";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { app } from "@/firebase";
+import { FirebaseError } from "firebase/app";
 
 export default defineComponent({
   name: "RegisterUsuario",
 
   data() {
     return {
+      name: "",
+      email: "",
+      telefone: "",
+      password: "",
+      userType: "Compositor",
       genres: [
         { id: 1, name: "Generos" },
         { id: 2, name: "Pop" },
@@ -110,16 +127,66 @@ export default defineComponent({
         { id: 4, name: "Eletrônica" },
         { id: 5, name: "Jazz" },
       ],
-      selectedGenre: 1,
+      selectedGenre: "Generos",
+      agreeTerms: false,
+      errorMessage: "",
+      successMessage: "",
     };
   },
 
   methods: {
-    login() {
-      // Implement your login logic here
-    },
-    moveToRegister() {
-      // Implement your navigation logic to registration page here
+    async registerUser() {
+      try {
+        if (!this.agreeTerms) {
+          this.errorMessage = "Você precisa concordar com os termos para se cadastrar.";
+          return;
+        }
+
+        const auth = getAuth(app);
+        const { email, password } = this;
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        const user = userCredential.user;
+
+        const userData = {
+          name: this.name,
+          telefone: this.telefone,
+          userType: this.userType,
+          selectedGenre: this.selectedGenre,
+        };
+
+        // Referência ao nó "users" no Firebase Realtime Database
+        const db = getDatabase(app);
+        const userRef = ref(db, `users/${user.uid}`);
+
+        // Envia os dados do usuário para o Firebase Realtime Database
+        await set(userRef, userData);
+
+        console.log("Usuário cadastrado com sucesso:", user);
+        console.log("Dados do usuário enviados para o Firebase:", userData);
+
+        this.name = "";
+        this.email = "";
+        this.telefone = "";
+        this.password = "";
+
+        this.successMessage = "Usuário cadastrado com sucesso!";
+        this.errorMessage = "";
+      } catch (error) {
+        const firebaseError = error as FirebaseError;
+
+        if (firebaseError.code === "auth/email-already-in-use") {
+          this.errorMessage = "E-mail já está em uso.";
+        } else {
+          this.errorMessage = "Erro ao cadastrar usuário: " + firebaseError.message;
+        }
+
+        this.successMessage = "";
+      }
     },
   },
 });

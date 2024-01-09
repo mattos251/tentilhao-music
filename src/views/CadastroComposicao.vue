@@ -3,15 +3,17 @@
     <div class="content">
       <h1>Cadastre sua composição</h1>
       <div class="form-page">
-        <h6>Faça upload do audio</h6>
+        <h6>Faça upload do áudio</h6>
         <div class="file">
           <label class="file-label">
-            <input class="file-input" type="file" name="resume" />
+            <input class="file-input" type="file" @change="handleAudioUpload" />
             <span class="file-cta">
               <span class="file-icon">
                 <i class="fas fa-upload"></i>
               </span>
-              <span class="file-label"> Primary file… </span>
+              <span class="file-label">{{
+                audioFile ? audioFile.name : "Selecione o arquivo"
+              }}</span>
             </span>
           </label>
         </div>
@@ -21,27 +23,34 @@
         <h6>Faça upload da imagem</h6>
         <div class="file">
           <label class="file-label">
-            <input class="file-input" type="file" name="resume" />
+            <input class="file-input" type="file" @change="handleImageUpload" />
             <span class="file-cta">
               <span class="file-icon">
                 <i class="fas fa-upload"></i>
               </span>
-              <span class="file-label"> Primary file… </span>
+              <span class="file-label">{{
+                imageFile ? imageFile.name : "Selecione o arquivo"
+              }}</span>
             </span>
           </label>
         </div>
       </div>
 
       <div class="is-flex is-justify-content-center m-2">
-        <h6>Titulo da composição</h6>
-        <input class="input" type="text" placeholder="Titulo" />
+        <h6>Título da composição</h6>
+        <input
+          class="input"
+          v-model="compositionTitle"
+          type="text"
+          placeholder="Título"
+        />
       </div>
 
       <div class="form-page">
-        <h6>Genero musical</h6>
+        <h6>Gênero musical</h6>
         <div class="select">
-          <select :v-model="selectedGenre">
-            <option v-for="genre in genres" :key="genre.id" :value="genre.name">
+          <select v-model="selectedGenre">
+            <option v-for="genre in genres" :key="genre.id" :value="genre.id">
               {{ genre.name }}
             </option>
           </select>
@@ -49,42 +58,99 @@
       </div>
 
       <div>
-        <textarea class="text-area" placeholder="e.g. Hello world"></textarea>
+        <textarea
+          class="text-area"
+          v-model="compositionDescription"
+          placeholder="e.g. Hello world"
+        ></textarea>
         <label class="checkbox">
-          <input type="checkbox" />
-          I agree to the <a href="#">terms and conditions</a>
+          <input v-model="agreeTerms" type="checkbox" />
+          Concordo com os <a href="#">termos e condições</a>
         </label>
       </div>
 
-      <div class="is-flex is is-justify-content-center">
-        <router-link to="/perfil">
-          <button class="button is-fullwidth is-responsive envio-formulario">
-            Envia
-          </button>
-        </router-link>
+      <div class="is-flex is-justify-content-center">
+        <button
+          @click="submitComposition"
+          class="button is-fullwidth is-responsive envio-formulario"
+        >
+          Enviar
+        </button>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
-export default defineComponent({
-  name: "CadastroComposicao",
-  data() {
-    return {
-      genres: [
-        { id: 1, name: "Generos" },
-        { id: 2, name: "Pop" },
-        { id: 3, name: "Hip Hop" },
-        { id: 4, name: "Eletrônica" },
-        { id: 5, name: "Jazz" },
-      ],
-      selectedGenre: 1,
+const genres = [
+  { id: 1, name: "Gêneros" },
+  { id: 2, name: "Pop" },
+  { id: 3, name: "Hip Hop" },
+  { id: 4, name: "Eletrônica" },
+  { id: 5, name: "Jazz" },
+];
+
+const selectedGenre = ref(1);
+const audioFile = ref<File | null>(null);
+const imageFile = ref<File | null>(null);
+const compositionTitle = ref("");
+const compositionDescription = ref("");
+const agreeTerms = ref(false);
+
+const router = useRouter();
+
+const handleAudioUpload = (event: { target: { files: File[] } }) => {
+  audioFile.value = event.target.files[0];
+};
+
+const handleImageUpload = (event: { target: { files: File[] } }) => {
+  imageFile.value = event.target.files[0];
+};
+
+const submitComposition = async () => {
+  try {
+    const storage = getStorage();
+    const db = getFirestore();
+
+    const audioRef = storageRef(storage, `audio/${audioFile.value?.name}`);
+    await uploadBytes(audioRef, audioFile.value!);
+
+    const imageRef = storageRef(storage, `images/${imageFile.value?.name}`);
+    await uploadBytes(imageRef, imageFile.value!);
+
+    const audioUrl = await getDownloadURL(audioRef);
+    const imageUrl = await getDownloadURL(imageRef);
+
+    // Save composition data to Firestore
+    const compositionData = {
+      genreId: selectedGenre.value,
+      title: compositionTitle.value,
+      description: compositionDescription.value,
+      audioUrl,
+      imageUrl,
+      agreeTerms: agreeTerms.value,
     };
-  },
-});
+
+    const docRef = await addDoc(collection(db, "compositions"), compositionData);
+
+    console.log("Composition added with ID: ", docRef.id);
+    console.log("compositionData: ", compositionData);
+
+    router.push({ path: "/perfil" });
+  } catch (error) {
+    console.error("Error uploading files or saving composition:", error);
+  }
+};
 </script>
 
 <style scoped>
