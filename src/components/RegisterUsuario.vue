@@ -106,7 +106,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, ref, set } from "firebase/database";
 import { app } from "@/firebase";
 import { FirebaseError } from "firebase/app";
 

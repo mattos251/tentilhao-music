@@ -40,13 +40,15 @@ const routes = [
                 path: '/homepage',
                 name: 'HomePage',
                 component: HomePage,
+                meta: { requiresAuth: true },
             },
 
             
             {
                 path: '/cadastro',
                 name: 'CadastroComposicao',
-                component: CadastroComposicao
+                component: CadastroComposicao,
+                meta: { requiresAuth: true },
             },
         ]
     },
@@ -67,6 +69,7 @@ const routes = [
                 path: '/:compositorId',
                 name: 'PaginaPerfil',
                 component: PaginaPerfil,
+                meta: { requiresAuth: true },
             },
         ]
 
