@@ -1,7 +1,11 @@
 <template>
   <div class="container is-full is-justify-content-space-around cards-lists">
     <div class="columns is-multiline is-flex">
-      <div v-for="card in cards" :key="card.id" class="card-box column is-one-fifth">
+      <div
+        v-for="card in cards"
+        :key="card.id"
+        class="card-box column is-one-fifth"
+      >
         <router-link :to="card.link" class="card-content title-card">
           <div class="image is-5by4">
             <img :src="card.imageSrc" alt="Card Image" />
@@ -24,44 +28,50 @@ export default defineComponent({
         {
           id: 1,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
+          imageSrc: require("@/assets/turmadopagode2.jpg"),
           title: "Pagode",
         },
         {
-          id: 1,
+          id: 2,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/brega.jpg"),
+          title: "Brega",
         },
         {
-          id: 1,
+          id: 3,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/phonk.jpg"),
+          title: "Phonk",
         },
         {
-          id: 1,
+          id: 4,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/pop.jpg"),
+          title: "Pop",
         },
         {
-          id: 1,
+          id: 5,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/rock.jpg"),
+          title: "Rock",
         },
         {
-          id: 1,
+          id: 6,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/sertanejo.jpg"),
+          title: "Sertanejo",
         },
         {
-          id: 1,
+          id: 7,
           link: "/feeds",
-          imageSrc: "../assets/turmadopagode2.jpg",
-          title: "Pagode",
+          imageSrc: require("@/assets/jazz.jpg"),
+          title: "Jazz",
+        },
+        {
+          id: 8,
+          link: "/feeds",
+          imageSrc: require("@/assets/eletronica.jpg"),
+          title: "Eletronica",
         },
 
         // Adicione mais cards conforme necessário
