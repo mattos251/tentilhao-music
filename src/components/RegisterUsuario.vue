@@ -106,10 +106,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import router from "@/router";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { get, getDatabase, ref, set } from "firebase/database";
-import { app } from "@/firebase";
-import { FirebaseError } from "firebase/app";
 
 export default defineComponent({
   name: "RegisterUsuario",

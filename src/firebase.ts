@@ -1,8 +1,6 @@
-// firebase.ts
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
+
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_API_KEY,
@@ -15,8 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const analytics = getAnalytics(app);
-const db = getFirestore(app);
+const storage = getStorage(app, "gs://tentilhao-5d475.appspot.com");
 
-export { app, auth, db, analytics };
+export { storage };

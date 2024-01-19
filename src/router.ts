@@ -8,7 +8,7 @@ import PaginaFeed from './views/PaginaFeed.vue';
 import PageCadastroUsuario from './views/PageCadastroUsuario.vue';
 import RegisterUsuario from './components/RegisterUsuario.vue';
 import LoginUsuario from './components/LoginUsuario.vue'
-import auth  from './auth';
+
 
 const routes = [
     
@@ -36,13 +36,11 @@ const routes = [
         path: '/homepage',
         name: 'PaginaPrincipal',
         component: PaginaPrincipal,
-        meta: { requiresAuth: true },
         children:[
             {
                 path: '/homepage',
                 name: 'HomePage',
                 component: HomePage,
-                meta: { requiresAuth: true },
             },
 
             
@@ -50,13 +48,11 @@ const routes = [
                 path: '/cadastro',
                 name: 'CadastroComposicao',
                 component: CadastroComposicao,
-                meta: { requiresAuth: true },
             },
             {
                 path: '/feeds',
                 name: 'PaginaFeed',
                 component: PaginaFeed,
-                meta: { requiresAuth: true },
             },
         ]
     },
@@ -66,13 +62,11 @@ const routes = [
         path: '/perfil',
         name: 'PaginaPerfil',
         component: PaginaPerfil,
-        meta: { requiresAuth: true },
         children:[
             {
                 path: '/:compositorId',
                 name: 'PaginaPerfil',
                 component: PaginaPerfil,
-                meta: { requiresAuth: true },
             },
         ]
 
@@ -85,7 +79,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-//   const requiresAuth = to.matched.some(route => route.meta.requiresAuth);
   const token = localStorage.getItem('token')
   const router = to.path
   
@@ -102,13 +95,6 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-
-
-//   if (requiresAuth && !auth.checkAuth()) {
-//     next('/');
-//   } else {
-//     next();
-//   }
 });
 
 

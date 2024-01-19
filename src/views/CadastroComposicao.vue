@@ -6,13 +6,18 @@
         <h6>Faça upload do áudio</h6>
         <div class="file">
           <label class="file-label">
-            <input class="file-input" type="file" @change="handleAudioUpload" />
+            <input
+              class="file-input"
+              type="file"
+              @change="handleAudioUpload"
+              accept="audio/*"
+            />
             <span class="file-cta">
               <span class="file-icon">
-                <i class="fas fa-upload"></i>
+                <i class="fas fa-file-audio"></i>
               </span>
               <span class="file-label">{{
-                audioFile ? audioFile.name : "Selecione o arquivo"
+                audioFile ? audioFile.name : "Selecione um arquivo de áudio"
               }}</span>
             </span>
           </label>
@@ -23,13 +28,18 @@
         <h6>Faça upload da imagem</h6>
         <div class="file">
           <label class="file-label">
-            <input class="file-input" type="file" @change="handleImageUpload" />
+            <input
+              class="file-input"
+              type="file"
+              @change="handleImageUpload"
+              accept="image/*"
+            />
             <span class="file-cta">
               <span class="file-icon">
-                <i class="fas fa-upload"></i>
+                <i class="fas fa-file-image"></i>
               </span>
               <span class="file-label">{{
-                imageFile ? imageFile.name : "Selecione o arquivo"
+                imageFile ? imageFile.name : "Selecione um arquivo de imagem"
               }}</span>
             </span>
           </label>
@@ -73,6 +83,7 @@
         <button
           @click="submitComposition"
           class="button is-fullwidth is-responsive envio-formulario"
+          :disabled="!isValidForm"
         >
           Enviar
         </button>
@@ -82,15 +93,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
   getDownloadURL,
+  ref as storageRef,
+  uploadBytesResumable,
 } from "firebase/storage";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import axios from "axios";
+import { storage } from "../firebase";
 
 const genres = [
   { id: 1, name: "Gêneros" },
@@ -106,6 +117,7 @@ const imageFile = ref<File | null>(null);
 const compositionTitle = ref("");
 const compositionDescription = ref("");
 const agreeTerms = ref(false);
+const usuaID = ref("");
 
 const router = useRouter();
 
@@ -117,38 +129,78 @@ const handleImageUpload = (event: { target: { files: File[] } }) => {
   imageFile.value = event.target.files[0];
 };
 
+const isValidForm = computed(() => {
+  return (
+    audioFile.value !== null &&
+    imageFile.value !== null &&
+    compositionTitle.value.trim() !== "" &&
+    selectedGenre.value !== 1 &&
+    agreeTerms.value
+  );
+});
+
 const submitComposition = async () => {
   try {
-    const storage = getStorage();
-    const db = getFirestore();
+    // Fazer upload do áudio
+    const audioStorageRef = storageRef(storage, `audio/${audioFile.value.name}`);
+    const audioUploadTask = uploadBytesResumable(audioStorageRef, audioFile.value);
 
-    const audioRef = storageRef(storage, `audio/${audioFile.value?.name}`);
-    await uploadBytes(audioRef, audioFile.value!);
+    // Fazer upload da imagem
+    const imageStorageRef = storageRef(storage, `images/${imageFile.value.name}`);
+    const imageUploadTask = uploadBytesResumable(imageStorageRef, imageFile.value);
 
-    const imageRef = storageRef(storage, `images/${imageFile.value?.name}`);
-    await uploadBytes(imageRef, imageFile.value!);
+    // Aguardar a conclusão de ambos os uploads
+    await Promise.all([audioUploadTask, imageUploadTask]);
 
-    const audioUrl = await getDownloadURL(audioRef);
-    const imageUrl = await getDownloadURL(imageRef);
+    // Agora você pode acessar as URLs de download dos arquivos se necessário
+    const audioUrl = await getDownloadURL(audioStorageRef);
 
-    // Save composition data to Firestore
+    const imageUrl = await getDownloadURL(imageStorageRef);
+
+    // Aqui você pode realizar qualquer lógica adicional, como enviar os URLs para o seu backend
+    // console.log("Áudio URL:", audioDownloadURL);
+    // console.log("Imagem URL:", imageDownloadURL);
+    const token1 = localStorage.getItem("token");
+
+    if (token1) {
+      try {
+        // Decodifica o token (assumindo que seja um token JWT)
+        const decodedToken = JSON.parse(atob(token1.split(".")[1]));
+
+        // Agora você pode acessar as informações do usuário
+        usuaID.value = decodedToken.userId;
+        console.log("pao com ovo", usuaID.value);
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+      }
+    } else {
+      console.log("Nenhum token encontrado no localStorage");
+    }
+
     const compositionData = {
-      genreId: selectedGenre.value,
+      usuarioId: usuaID.value,
+      imagem_capa: imageUrl,
+      audio: audioUrl,
       title: compositionTitle.value,
-      description: compositionDescription.value,
-      audioUrl,
-      imageUrl,
-      agreeTerms: agreeTerms.value,
+      genero_musical_id: selectedGenre.value,
+      texto: compositionDescription.value,
     };
 
-    const docRef = await addDoc(collection(db, "compositions"), compositionData);
+    console.log(compositionData);
 
-    console.log("Composition added with ID: ", docRef.id);
-    console.log("compositionData: ", compositionData);
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:3333/api/cadastro/ComposicaoUser", compositionData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     router.push({ path: "/perfil" });
+    // Continuar com a lógica do seu aplicativo (por exemplo, enviar dados para o backend)
   } catch (error) {
-    console.error("Error uploading files or saving composition:", error);
+    console.error("Erro durante o upload:", error.message);
+    // Lógica de tratamento de erro, se necessário
   }
 };
 </script>
