@@ -18,15 +18,14 @@
   </div>
 </template>
 <script>
-
-import NavbarNavigation from '../components/NavbarNavigation.vue'
-import SidbarNavigation from '../components/SidbarNavigation.vue'
+import NavbarNavigation from "../components/NavbarNavigation.vue";
+import SidbarNavigation from "../components/SidbarNavigation.vue";
 
 export default {
   name: "PaginaPrincipal",
-  components:{
+  components: {
     NavbarNavigation,
-    SidbarNavigation
-  }
+    SidbarNavigation,
+  },
 };
 </script>

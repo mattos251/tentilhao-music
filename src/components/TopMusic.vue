@@ -1,18 +1,16 @@
 <template>
   <div class="is-desktop">
-  
-      <div class="container box-list">
-        <div class="columns item-music">
-          <div class="column " v-for="song in topSongs" :key="song.id">
-            <div class="top-list is-flex">
-              <div class="is-flex is-justify-content-center">
-                <img :src="song.imageUrl" alt="Imagem da Música" />
-              </div>
+    <div class="container box-list">
+      <div class="columns item-music">
+        <div class="column" v-for="song in topSongs" :key="song.id">
+          <div class="top-list is-flex">
+            <div class="is-flex is-justify-content-center">
+              <img :src="song.imageUrl" alt="Imagem da Música" />
             </div>
           </div>
         </div>
       </div>
-
+    </div>
   </div>
 </template>
 
@@ -71,23 +69,22 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.box-list{
-    width: 100%;
+.box-list {
+  width: 100%;
 }
-.top-list img{
-    display: flex;
-    justify-content: center;
-    width: 50%;
-    border-radius: 100%;
-}
-
-.top-list figure{
-    display: flex;
-    margin-top: 20px;
-    justify-content: center;
-    width: 200px;
-    height: 60px;
-    border-radius: 100%;
+.top-list img {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  border-radius: 100%;
 }
 
+.top-list figure {
+  display: flex;
+  margin-top: 20px;
+  justify-content: center;
+  width: 200px;
+  height: 60px;
+  border-radius: 100%;
+}
 </style>

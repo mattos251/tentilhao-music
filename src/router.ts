@@ -1,3 +1,4 @@
+// import { router } from '@/router';
 import { createRouter, createWebHistory } from 'vue-router';
 import CadastroComposicao from './views/CadastroComposicao.vue';
 import HomePage from './views/HomePage.vue';
@@ -18,15 +19,16 @@ const routes = [
         children:[
             {
                 path: '/',
-                name: 'RegisterUsuario',
-                component: RegisterUsuario,
-            },
-            {
-                path: '/Login',
                 name: 'LoginUsuario',
                 component: LoginUsuario,
             },
+            {
+                path: '/registro',
+                name: 'RegisterUsuario',
+                component: RegisterUsuario,
+            },
         ]
+        
     },
 
 
@@ -50,14 +52,15 @@ const routes = [
                 component: CadastroComposicao,
                 meta: { requiresAuth: true },
             },
+            {
+                path: '/feeds',
+                name: 'PaginaFeed',
+                component: PaginaFeed,
+                meta: { requiresAuth: true },
+            },
         ]
     },
-    {
-        path: '/feeds',
-        name: 'PaginaFeed',
-        component: PaginaFeed,
-        meta: { requiresAuth: true },
-    },
+    
     
     {
         path: '/perfil',
@@ -82,16 +85,31 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(route => route.meta.requiresAuth);
-
-  if (requiresAuth && !auth.checkAuth()) {
-    next('/login');
-  } else {
+//   const requiresAuth = to.matched.some(route => route.meta.requiresAuth);
+  const token = localStorage.getItem('token')
+  const router = to.path
+  
+  if( ['/', '/registro'].includes(router)){
+    if(token){
+        next('/homepage');
+    } 
     next();
+  }else{
+    if(!token){
+        next('/');
+    }else{
+        next();
+    }
   }
+
+
+
+//   if (requiresAuth && !auth.checkAuth()) {
+//     next('/');
+//   } else {
+//     next();
+//   }
 });
-
-
 
 
 export default router;

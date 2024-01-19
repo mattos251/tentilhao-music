@@ -49,12 +49,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
-import { useStore } from "vuex";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { UserCredential } from "firebase/auth";
-import { getDatabase, ref as dbRef, get } from "firebase/database";
+import { defineComponent, ref } from "vue";
+import axios from "axios";
 import router from "@/router";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "LoginUsuario",
@@ -63,54 +61,55 @@ export default defineComponent({
     const email = ref("");
     const password = ref("");
     const error = ref<string | null>(null);
-
     const store = useStore();
-    const user = computed(() => store.getters.getUser);
 
     const EnvioLogin = async () => {
+      console.log("Requisição de login recebida:", {
+        email: email.value,
+        senha: password.value,
+      });
       try {
-        const auth = getAuth();
         const { email: userEmail, password: userPassword } = {
           email: email.value,
           password: password.value,
         };
 
-        const userCredential: UserCredential = await signInWithEmailAndPassword(
-          auth,
-          userEmail,
-          userPassword
+        const response = await axios.post(
+          "http://localhost:3333/api/login",
+          {
+            email: userEmail,
+            password: userPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              body: JSON.stringify({ email, password }),
+            },
+          }
         );
 
-        // Aguarde a atualização do estado do usuário antes de acessar o banco de dados
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Ajuste o tempo conforme necessário
+        if (response.data.token) {
+          const token = response.data.token;
+          console.log("token", token);
 
-        // Atualiza o estado do usuário no Vuex
-        store.commit("setUser", userCredential.user);
-        console.log("Usuário autenticado com sucesso:", userCredential.user);
+          // const user = response.data.user;
 
-        // Agora, você pode acessar o Realtime Database
-        if (userCredential.user) {
-          const db = getDatabase();
-          const userRef = dbRef(db, `users/${userCredential.user.uid}`);
-          const userSnapshot = await get(userRef);
-          const userData = userSnapshot.val();
-          console.log("Dados do usuário do Realtime Database:", userData);
+          // store.dispatch("loginUser", { token, user });
+
+          localStorage.setItem("token", token);
+
+          // localStorage.setItem("user", JSON.stringify(user));
+
+          router.push("/homepage");
         } else {
-          console.error("Usuário não encontrado após autenticação.");
+          console.error("Erro de autenticação:", response.data.message);
+          error.value = response.data.message;
         }
-
-        router.push("/homepage");
       } catch (error: any) {
-        // Lidar com erros de autenticação
         console.error("Erro de autenticação:", error.message);
         error.value = error.message as string;
       }
     };
-
-    // Assista a mudanças no usuário para fins de depuração
-    watch(user, (newUser) => {
-      console.log("Usuário atualizado no Vuex:", newUser);
-    });
 
     return {
       email,

@@ -1,6 +1,6 @@
 <template>
   <div class="is-desktop">
-    <NavbarNavigation />
+    <!-- <NavbarNavigation /> -->
 
     <div class="m-2 is-large">
       <div class="is-flex is-justify-content-center m-2">
@@ -29,7 +29,6 @@
 <script lang="ts">
 import BanerIdentidade from "@/components/BanerIdentidade.vue";
 import MusicPlaylistFeed from "@/components/MusicPlaylistFeed.vue";
-import NavbarNavigation from "@/components/NavbarNavigation.vue";
 import PlayerMusic from "@/components/PlayerMusic.vue";
 // import TopMusic from "@/components/TopMusic.vue";
 import { defineComponent } from "vue";
@@ -37,7 +36,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "PaginaFeed",
   components: {
-    NavbarNavigation,
     BanerIdentidade,
     MusicPlaylistFeed,
     PlayerMusic,

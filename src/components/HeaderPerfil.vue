@@ -10,7 +10,7 @@
               </figure>
             </div>
             <div class="media-content is-align-self-center">
-              <p class="title is-4">Spiliquide</p>
+              <p class="title is-4">{{ usuario.nome }}</p>
               <p class="subtitle is-6">Compositor</p>
             </div>
           </div>
@@ -44,6 +44,33 @@
 <script>
 export default {
   name: "HeaderPerfil",
+  data() {
+    return {
+      usuario: {
+        nome: "", // Inicializar com um valor padrão ou vazio
+        // Adicione outros campos do usuário conforme necessário
+      },
+    };
+  },
+
+  mounted() {
+    // Recupera o token do localStorage
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        // Decodifica o token (assumindo que seja um token JWT)
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+        // Agora você pode acessar as informações do usuário
+        this.usuario.nome = decodedToken.nome_completo;
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+      }
+    } else {
+      console.log("Nenhum token encontrado no localStorage");
+    }
+  },
 };
 </script>
 

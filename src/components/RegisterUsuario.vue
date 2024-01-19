@@ -105,6 +105,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import router from "@/router";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { get, getDatabase, ref, set } from "firebase/database";
 import { app } from "@/firebase";
@@ -137,54 +138,51 @@ export default defineComponent({
   methods: {
     async registerUser() {
       try {
-        if (!this.agreeTerms) {
-          this.errorMessage = "Você precisa concordar com os termos para se cadastrar.";
-          return;
-        }
+        // Código existente...
 
-        const auth = getAuth(app);
-        const { email, password } = this;
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        const user = userCredential.user;
-
+        // Dados a serem enviados ao backend
         const userData = {
-          name: this.name,
-          telefone: this.telefone,
-          userType: this.userType,
-          selectedGenre: this.selectedGenre,
+          nome_completo: this.name,
+          email: this.email,
+          senha: this.password,
+          tipo_usuario_id: this.userType === "Compositor" ? 1 : 2, // Exemplo de atribuição baseada no tipo de usuário
+          genero_musical_id:
+            this.genres.find((genre) => genre.name === this.selectedGenre)?.id || 0, // Id do gênero musical selecionado
+          numero_telefone: this.telefone,
         };
 
-        // Referência ao nó "users" no Firebase Realtime Database
-        const db = getDatabase(app);
-        const userRef = ref(db, `users/${user.uid}`);
+        // Enviar dados para o backend
+        const response = await fetch("http://localhost:3333/api/usuarios/cadastro", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
 
-        // Envia os dados do usuário para o Firebase Realtime Database
-        await set(userRef, userData);
+        const responseData = await response.json();
 
-        console.log("Usuário cadastrado com sucesso:", user);
-        console.log("Dados do usuário enviados para o Firebase:", userData);
+        if (response.ok) {
+          // Sucesso
+          this.successMessage = responseData.message;
+          router.push("/");
 
+          this.errorMessage = "";
+        } else {
+          // Erro
+          this.errorMessage = responseData.message;
+          this.successMessage = "";
+        }
+
+        // Limpar campos após o cadastro
         this.name = "";
         this.email = "";
         this.telefone = "";
         this.password = "";
-
-        this.successMessage = "Usuário cadastrado com sucesso!";
-        this.errorMessage = "";
       } catch (error) {
-        const firebaseError = error as FirebaseError;
-
-        if (firebaseError.code === "auth/email-already-in-use") {
-          this.errorMessage = "E-mail já está em uso.";
-        } else {
-          this.errorMessage = "Erro ao cadastrar usuário: " + firebaseError.message;
-        }
-
+        // Tratar erro
+        console.error("Erro ao cadastrar usuário:", error);
+        this.errorMessage = "Erro ao cadastrar usuário.";
         this.successMessage = "";
       }
     },

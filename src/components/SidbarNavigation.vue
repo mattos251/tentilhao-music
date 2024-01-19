@@ -13,7 +13,7 @@
 
         <ul class="menu-nav is-justify-content-center">
           <div class="title-perfil">
-            <h2 class="subtitle">Spiliquide</h2>
+            <h2 class="subtitle">{{ usuario.nome }}</h2>
           </div>
 
           <li>
@@ -24,7 +24,7 @@
 
           <li>
             <router-link to="/cadastro">
-              <a href="">Nova musica</a>
+              <a href="">Nova música</a>
             </router-link>
           </li>
 
@@ -40,6 +40,34 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "SidbarNavigation",
+
+  data() {
+    return {
+      usuario: {
+        nome: "", // Inicializar com um valor padrão ou vazio
+        // Adicione outros campos do usuário conforme necessário
+      },
+    };
+  },
+
+  mounted() {
+    // Recupera o token do localStorage
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        // Decodifica o token (assumindo que seja um token JWT)
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+        // Agora você pode acessar as informações do usuário
+        this.usuario.nome = decodedToken.nome_completo;
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+      }
+    } else {
+      console.log("Nenhum token encontrado no localStorage");
+    }
+  },
 });
 </script>
 
