@@ -50,9 +50,10 @@ const routes = [
                 component: CadastroComposicao,
             },
             {
-                path: '/feeds',
+                path: '/feeds/:genero',
                 name: 'PaginaFeed',
                 component: PaginaFeed,
+                props: true,
             },
         ]
     },

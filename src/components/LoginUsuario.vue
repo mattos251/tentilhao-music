@@ -1,8 +1,8 @@
 <template>
   <div class="background-register">
-    <div class="box-register container box">
+    <div class="box-register container">
       <form @submit.prevent="EnvioLogin">
-        <h1 class="mb-3">Login</h1>
+        <h1 class="mb-3 is-size-4-mobile is-size-3-tablet is-size-2-desktop">Login</h1>
 
         <div class="field">
           <label class="label" for="email">Email address</label>
@@ -31,17 +31,27 @@
             />
           </div>
         </div>
+        <p class="mt-3">
+          Ainda não tem uma conta?
+          <router-link to="/registro">Crie uma conta aqui</router-link>
+        </p>
 
         <button
           type="submit"
-          class="mt-4 is-flex is-align-items-cente button is-primary"
+          class="mt-4 button is-primary is-fullwidth-mobile"
           id="Login_button"
         >
           Entrar
         </button>
-        <div class="notification is-warning mt-5 is-hidden" role="alert">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-          <button type="button" class="delete" aria-label="Close"></button>
+
+        <div class="notification is-warning mt-5" role="alert" v-if="loginError">
+          {{ loginError }}
+          <button
+            @click="resetError"
+            type="button"
+            class="delete"
+            aria-label="Close"
+          ></button>
         </div>
       </form>
     </div>
@@ -60,7 +70,7 @@ export default defineComponent({
   setup() {
     const email = ref("");
     const password = ref("");
-    const error = ref<string | null>(null);
+    const loginError = ref<string | null>(null);
     const store = useStore();
 
     const EnvioLogin = async () => {
@@ -68,54 +78,38 @@ export default defineComponent({
         email: email.value,
         senha: password.value,
       });
+
       try {
-        const { email: userEmail, password: userPassword } = {
+        const response = await axios.post("http://localhost:3333/api/login", {
           email: email.value,
           password: password.value,
-        };
-
-        const response = await axios.post(
-          "http://localhost:3333/api/login",
-          {
-            email: userEmail,
-            password: userPassword,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              body: JSON.stringify({ email, password }),
-            },
-          }
-        );
+        });
 
         if (response.data.token) {
           const token = response.data.token;
           console.log("token", token);
-
-          // const user = response.data.user;
-
-          // store.dispatch("loginUser", { token, user });
-
           localStorage.setItem("token", token);
-
-          // localStorage.setItem("user", JSON.stringify(user));
-
           router.push("/homepage");
         } else {
           console.error("Erro de autenticação:", response.data.message);
-          error.value = response.data.message;
+          loginError.value = response.data.message;
         }
       } catch (error: any) {
         console.error("Erro de autenticação:", error.message);
-        error.value = error.message as string;
+        loginError.value = "Erro ao processar a solicitação. Tente novamente mais tarde.";
       }
+    };
+
+    const resetError = () => {
+      loginError.value = null;
     };
 
     return {
       email,
       password,
-      error,
+      loginError,
       EnvioLogin,
+      resetError,
     };
   },
 });

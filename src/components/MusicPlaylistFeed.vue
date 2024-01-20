@@ -2,6 +2,7 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
+        <!-- v-for="musica in filtrarMusicasPorGenero" :key="musica.id" -->
         <li v-for="(composition, index) in compositions" :key="index">
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
@@ -36,6 +37,9 @@ import axios from "axios";
 export default defineComponent({
   nome: "MusicPlaylistFeed",
   components: { SvgIcon },
+  // props: {
+  //   genero: String  // Receba o parâmetro do gênero como propriedade
+  // },
   data() {
     return {
       Play: mdiPlay,
@@ -55,6 +59,12 @@ export default defineComponent({
       window.open(linkWhatsApp, "_blank");
     },
   },
+  // computed: {
+  //   filtrarMusicasPorGenero() {
+  //     // Filtrar músicas com base no gênero recebido como propriedade
+  //     return this.musicas.filter(musica => musica.genero === this.genero);
+  //   }
+  // },
   async mounted() {
     try {
       const token = localStorage.getItem("token");

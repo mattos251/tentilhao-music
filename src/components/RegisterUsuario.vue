@@ -67,8 +67,8 @@
           >
             <label class="label" for="Tipo-usuario"> Genero musical </label>
             <select v-model="selectedGenre">
-              <option v-for="genre in genres" :key="genre.id" :value="genre.name">
-                {{ genre.name }}
+              <option v-for="genre in genres" :key="genre.id" :value="genre.genero">
+                {{ genre.genero }}
               </option>
             </select>
           </div>
@@ -106,6 +106,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import router from "@/router";
+import axios from "axios";
 
 export default defineComponent({
   name: "RegisterUsuario",
@@ -116,38 +117,39 @@ export default defineComponent({
       email: "",
       telefone: "",
       password: "",
-      userType: "Compositor",
-      genres: [
-        { id: 1, name: "Generos" },
-        { id: 2, name: "Pop" },
-        { id: 3, name: "Hip Hop" },
-        { id: 4, name: "Eletrônica" },
-        { id: 5, name: "Jazz" },
-      ],
-      selectedGenre: "Generos",
+      userType: "Compositor" as "Compositor" | "Produtor", // Ajuste de tipagem
+      genres: [] as { id: number; genero: string }[], // Ajuste de tipagem
+      selectedGenre: "Forró romantico" as string, // Ajuste de tipagem
       agreeTerms: false,
       errorMessage: "",
       successMessage: "",
     };
   },
 
+  async mounted() {
+    try {
+      const response = await axios.get("http://localhost:3333/api/generos");
+      this.genres = response.data;
+      console.log("generos", this.genres);
+    } catch (error: any) {
+      console.error("Erro ao obter generos:", error.message);
+    }
+  },
+
   methods: {
     async registerUser() {
       try {
-        // Código existente...
-
-        // Dados a serem enviados ao backend
         const userData = {
           nome_completo: this.name,
           email: this.email,
           senha: this.password,
-          tipo_usuario_id: this.userType === "Compositor" ? 1 : 2, // Exemplo de atribuição baseada no tipo de usuário
+          tipo_usuario_id: this.userType === "Compositor" ? 1 : 2,
           genero_musical_id:
-            this.genres.find((genre) => genre.name === this.selectedGenre)?.id || 0, // Id do gênero musical selecionado
+            this.genres.find((genre) => genre.genero === this.selectedGenre)?.id || 0,
           numero_telefone: this.telefone,
+          imagem_perfil: null,
         };
 
-        // Enviar dados para o backend
         const response = await fetch("http://localhost:3333/api/usuarios/cadastro", {
           method: "POST",
           headers: {
@@ -159,24 +161,19 @@ export default defineComponent({
         const responseData = await response.json();
 
         if (response.ok) {
-          // Sucesso
           this.successMessage = responseData.message;
           router.push("/");
-
           this.errorMessage = "";
         } else {
-          // Erro
           this.errorMessage = responseData.message;
           this.successMessage = "";
         }
 
-        // Limpar campos após o cadastro
         this.name = "";
         this.email = "";
         this.telefone = "";
         this.password = "";
       } catch (error) {
-        // Tratar erro
         console.error("Erro ao cadastrar usuário:", error);
         this.errorMessage = "Erro ao cadastrar usuário.";
         this.successMessage = "";
