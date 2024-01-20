@@ -2,13 +2,14 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
-        <li v-for="(song, index) in songs" :key="index">
+        <li v-for="(composition, index) in compositions" :key="index">
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
           >
             <svg-icon type="mdi" :path="Play"></svg-icon>
-            <p>{{ song.artist }}</p>
-            <p>{{ song.title }}</p>
+            <p>{{ composition.userName }}</p>
+            <p>{{ composition.titulo }}</p>
+
             <div class="is-flex">
               <svg-icon type="mdi" :path="Delete"></svg-icon>
               <svg-icon type="mdi" :path="Editar"></svg-icon>
@@ -24,6 +25,7 @@
 import { defineComponent } from "vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline } from "@mdi/js";
+import axios from "axios";
 
 export default defineComponent({
   name: "MusicPlaylistFeed",
@@ -33,32 +35,63 @@ export default defineComponent({
       Play: mdiPlay,
       Delete: mdiDelete,
       Editar: mdiSquareEditOutline,
-      songs: [
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        { artist: "Link Park", title: "In the End" },
-        // Adicione mais itens conforme necessário
-      ],
+      compositions: [],
     };
   },
-  // methods: {
-  //   deleteSong() {
-  //     // Implemente a lógica de exclusão aqui
-  //     this.songs.splice(2, 1);
-  //   },
-  //   editSong() {
-  //     // Implemente a lógica de edição aqui
-  //     console.log("Editar música", this.songs[2]);
-  //   },
-  // },
+  mounted() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const usuarioId = this.decodeToken(token);
+      this.fetchComposicoes(usuarioId, token);
+    }
+  },
+
+  methods: {
+    decodeToken(token: string) {
+      try {
+        const [header, payload] = token.split(".").slice(0, 2);
+        const decodedPayload = JSON.parse(atob(payload));
+        console.error("token:", decodedPayload);
+        return decodedPayload.userId;
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+        return null;
+      }
+    },
+
+    async fetchComposicoes(userId: any, token: string) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3333/api/composicoesUser/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        for (const composition of response.data) {
+          const userResponse = await axios.get(
+            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // Adicionar o nome do usuário à composição
+          composition.userName = userResponse.data.usuario.nome_completo;
+        }
+
+        this.compositions = response.data;
+        console.log(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar composições:", error);
+      }
+    },
+  },
 });
 </script>
 

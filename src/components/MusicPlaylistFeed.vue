@@ -2,13 +2,13 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
-        <li v-for="(song, index) in songs" :key="index">
+        <li v-for="(composition, index) in compositions" :key="index">
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
           >
             <svg-icon type="mdi" :path="Play"></svg-icon>
-            <p>{{ song.artist }}</p>
-            <p>{{ song.title }}</p>
+            <p>{{ composition.userName }}</p>
+            <p>{{ composition.titulo }}</p>
             <div class="is-flex">
               <router-link
                 to="{name: 'perfil', params: { compositorId: song.compositorId }}"
@@ -31,6 +31,7 @@
 import { defineComponent } from "vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiAccountBox, mdiPlay, mdiSendCircleOutline } from "@mdi/js";
+import axios from "axios";
 
 export default defineComponent({
   nome: "MusicPlaylistFeed",
@@ -40,21 +41,7 @@ export default defineComponent({
       Play: mdiPlay,
       profile: mdiAccountBox,
       Sendmessage: mdiSendCircleOutline,
-      songs: [
-        {
-          artist: "Link Park",
-          title: "In the End",
-          compositorId: 1,
-          compositorPhoneNumber: "+123456789",
-        },
-        {
-          artist: "Spiliquid",
-          title: "meu ovo",
-          compositorId: 2,
-          compositorPhoneNumber: "89994758809",
-        },
-        // Adicione mais itens conforme necessário
-      ],
+      compositions: [],
     };
   },
   methods: {
@@ -67,6 +54,35 @@ export default defineComponent({
       // Abra o link do WhatsApp em uma nova janela ou guia
       window.open(linkWhatsApp, "_blank");
     },
+  },
+  async mounted() {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:3333/api/composicoes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }); // Endpoint para obter as composições
+
+      // Iterar sobre as composições para buscar o nome do usuário
+      for (const composition of response.data) {
+        const userResponse = await axios.get(
+          `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Adicionar o nome do usuário à composição
+        composition.userName = userResponse.data.usuario.nome_completo;
+      }
+
+      this.compositions = response.data;
+    } catch (error: any) {
+      console.error("Erro ao obter composições:", error.message);
+    }
   },
 });
 </script>
