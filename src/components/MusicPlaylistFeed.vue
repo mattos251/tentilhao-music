@@ -11,13 +11,11 @@
             <p>{{ composition.userName }}</p>
             <p>{{ composition.titulo }}</p>
             <div class="is-flex">
-              <router-link
-                to="{name: 'perfil', params: { compositorId: song.compositorId }}"
-              >
+              <router-link to="/perfil">
                 <svg-icon type="mdi" :path="profile"></svg-icon>
               </router-link>
 
-              <a @click="enviarMensagem(song.compositorPhoneNumber)">
+              <a @click="enviarMensagem(composition.compositorPhoneNumber)">
                 <svg-icon type="mdi" :path="Sendmessage"></svg-icon>
               </a>
             </div>
@@ -37,14 +35,12 @@ import axios from "axios";
 export default defineComponent({
   nome: "MusicPlaylistFeed",
   components: { SvgIcon },
-  // props: {
-  //   genero: String  // Receba o parâmetro do gênero como propriedade
-  // },
   data() {
     return {
       Play: mdiPlay,
       profile: mdiAccountBox,
       Sendmessage: mdiSendCircleOutline,
+      idUser: "",
       compositions: [],
     };
   },
@@ -58,13 +54,28 @@ export default defineComponent({
       // Abra o link do WhatsApp em uma nova janela ou guia
       window.open(linkWhatsApp, "_blank");
     },
+
+    // isProfileOfCurrentUser(compositions) {
+    //   const token = localStorage.getItem("token");
+
+    //   if (token) {
+    //     try {
+    //       // Decodifica o token (assumindo que seja um token JWT)
+    //       const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+    //       // Agora você pode acessar as informações do usuário
+    //       this.idUser = decodedToken.userId;
+    //     } catch (error) {
+    //       console.error("Erro ao decodificar o token:", error);
+    //     }
+    //   } else {
+    //     console.log("Nenhum token encontrado no localStorage");
+    //   }
+
+    //   const usuarioIdAtual = this.idUser; // Obtenha o ID do usuário atual da sua aplicação;
+    //   return compositions.usuario_id === usuarioIdAtual;
+    // },
   },
-  // computed: {
-  //   filtrarMusicasPorGenero() {
-  //     // Filtrar músicas com base no gênero recebido como propriedade
-  //     return this.musicas.filter(musica => musica.genero === this.genero);
-  //   }
-  // },
   async mounted() {
     try {
       const token = localStorage.getItem("token");

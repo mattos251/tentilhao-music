@@ -91,12 +91,12 @@ export default {
     // handleVolumeChange() {
     //   this.music!.element.volume = this.volume.range / 100;
     // },
-    handlePrevious() {
-      // Adicione a lógica para reproduzir a faixa anterior
-    },
-    handleNext() {
-      // Adicione a lógica para reproduzir a próxima faixa
-    },
+    // handlePrevious() {
+    //   // Adicione a lógica para reproduzir a faixa anterior
+    // },
+    // handleNext() {
+    //   // Adicione a lógica para reproduzir a próxima faixa
+    // },
   },
 };
 </script>

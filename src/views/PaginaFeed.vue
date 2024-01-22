@@ -1,10 +1,14 @@
 <template>
   <div class="is-desktop">
-    <!-- <NavbarNavigation /> -->
+    <NavbarNavigation />
 
     <div class="m-2 is-large">
       <div class="is-flex is-justify-content-center m-2">
-        <BanerIdentidade />
+        <div
+          class="banner-central box is-flex is-justify-content-center is-align-items-center"
+        >
+          <h1>{{ genero }}</h1>
+        </div>
       </div>
 
       <div class="is-flex is-justify-content-center m-2">
@@ -27,18 +31,22 @@
 </template>
 
 <script lang="ts">
-import BanerIdentidade from "@/components/BanerIdentidade.vue";
 import MusicPlaylistFeed from "@/components/MusicPlaylistFeed.vue";
 import PlayerMusic from "@/components/PlayerMusic.vue";
+import NavbarNavigation from "@/components/NavbarNavigation.vue";
+
 // import TopMusic from "@/components/TopMusic.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "PaginaFeed",
   components: {
-    BanerIdentidade,
     MusicPlaylistFeed,
     PlayerMusic,
+    NavbarNavigation,
+  },
+  props: {
+    genero: String,
   },
 });
 </script>
@@ -58,5 +66,20 @@ export default defineComponent({
   height: 35px;
   border: 2px solid #519bc4;
   width: 50%;
+}
+
+.banner-central {
+  width: 80%;
+  height: 120px;
+  background-image: url("../assets/turmadopagode2.jpg");
+  background-size: cover;
+}
+.banner-central h1 {
+  font-size: x-large;
+  background-color: rgba(255, 255, 255, 0.7); /* Cor de fundo com opacidade */
+  padding: 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(0.5px); /* Valor de desfoque */
+  color: #333; /* Cor do texto */
 }
 </style>

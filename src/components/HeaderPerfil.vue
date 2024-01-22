@@ -11,7 +11,9 @@
             </div>
             <div class="media-content is-align-self-center">
               <p class="title is-4">{{ usuario.nome }}</p>
-              <p class="subtitle is-6">Compositor</p>
+              <p class="subtitle is-6">
+                {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
+              </p>
             </div>
           </div>
           <div class="navegation">
@@ -47,7 +49,8 @@ export default {
   data() {
     return {
       usuario: {
-        nome: "", // Inicializar com um valor padrão ou vazio
+        nome: "",
+        tipo_usuario: "", // Inicializar com um valor padrão ou vazio
         // Adicione outros campos do usuário conforme necessário
       },
     };
@@ -64,6 +67,7 @@ export default {
 
         // Agora você pode acessar as informações do usuário
         this.usuario.nome = decodedToken.nome_completo;
+        this.usuario.tipo_usuario = decodedToken.tipo_usuario_id;
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
       }

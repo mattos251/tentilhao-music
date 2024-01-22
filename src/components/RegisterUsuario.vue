@@ -86,7 +86,7 @@
         <button
           v-if="!successMessage"
           type="submit"
-          class="mt-4 is-flex is-align-items-cente button is-primary"
+          class="button is-fullwidth-mobile cadastro-button"
           id="registration_button"
         >
           Cadastrar
@@ -216,5 +216,18 @@ export default defineComponent({
 }
 .notification {
   background: aliceblue;
+}
+
+.cadastro-button {
+  margin-top: 10px;
+  background-color: aliceblue;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.cadastro-button:hover {
+  background-color: #04314afd;
+  color: white;
 }
 </style>

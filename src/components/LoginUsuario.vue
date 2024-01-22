@@ -2,49 +2,48 @@
   <div class="background-register">
     <div class="box-register container">
       <form @submit.prevent="EnvioLogin">
-        <h1 class="mb-3 is-size-4-mobile is-size-3-tablet is-size-2-desktop">Login</h1>
+        <h1 class="heading">Login</h1>
 
         <div class="field">
           <label class="label" for="email">Email address</label>
-          <div class="control">
-            <input
-              required
-              class="input"
-              type="email"
-              v-model="email"
-              name="email"
-              placeholder="email@address.com"
-            />
-          </div>
+          <input
+            required
+            class="input"
+            type="email"
+            v-model="email"
+            name="email"
+            placeholder="Email@address.com"
+          />
         </div>
 
         <div class="field">
           <label class="label" for="password">Password</label>
-          <div class="control">
-            <input
-              required
-              class="input"
-              v-model="password"
-              type="password"
-              name="password"
-              placeholder="password123"
-            />
-          </div>
+          <input
+            required
+            class="input"
+            v-model="password"
+            type="password"
+            name="password"
+            placeholder="Password123"
+          />
         </div>
+
         <p class="mt-3">
-          Ainda não tem uma conta?
-          <router-link to="/registro">Crie uma conta aqui</router-link>
+          Don't have an account?
+          <router-link to="/registro" class="create-account-link">
+            Create an account here
+          </router-link>
         </p>
 
         <button
           type="submit"
-          class="mt-4 button is-primary is-fullwidth-mobile"
+          class="button is-fullwidth-mobile login-button"
           id="Login_button"
         >
-          Entrar
+          Sign In
         </button>
 
-        <div class="notification is-warning mt-5" role="alert" v-if="loginError">
+        <div class="notification is-warning mt-5" v-if="loginError">
           {{ loginError }}
           <button
             @click="resetError"
@@ -129,23 +128,46 @@ export default defineComponent({
 }
 
 .box-register {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgb(255 255 255 / 6%);
   padding: 20px;
   position: fixed;
   border-radius: 8px;
   width: 30%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra suave */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-.box-register label {
-  color: aliceblue;
-}
+
+.box-register label,
+.box-register p,
 .box-register h1 {
-  display: flex;
   color: aliceblue;
+}
+
+.heading {
+  display: flex;
   font-size: 30px;
   justify-content: center;
 }
+
+.create-account-link {
+  color: #a2b8ca94;
+  font-size: small;
+  text-decoration: underline;
+}
+
 .notification {
   background: aliceblue;
+}
+
+.login-button {
+  margin-top: 10px;
+  background-color: aliceblue;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.login-button:hover {
+  background-color: #04314afd;
+  color: white;
 }
 </style>

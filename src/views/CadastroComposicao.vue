@@ -61,7 +61,7 @@
         <div class="select">
           <select v-model="selectedGenre">
             <option v-for="genre in genres" :key="genre.id" :value="genre.id">
-              {{ genre.name }}
+              {{ genre.genero }}
             </option>
           </select>
         </div>
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   getDownloadURL,
@@ -103,14 +103,6 @@ import {
 import axios from "axios";
 import { storage } from "../firebase";
 
-const genres = [
-  { id: 1, name: "Gêneros" },
-  { id: 2, name: "Pop" },
-  { id: 3, name: "Hip Hop" },
-  { id: 4, name: "Eletrônica" },
-  { id: 5, name: "Jazz" },
-];
-
 const selectedGenre = ref(1);
 const audioFile = ref<File | null>(null);
 const imageFile = ref<File | null>(null);
@@ -118,6 +110,7 @@ const compositionTitle = ref("");
 const compositionDescription = ref("");
 const agreeTerms = ref(false);
 const usuaID = ref("");
+const genres = ref([]);
 
 const router = useRouter();
 
@@ -203,6 +196,16 @@ const submitComposition = async () => {
     // Lógica de tratamento de erro, se necessário
   }
 };
+
+onMounted(async () => {
+  try {
+    const response = await axios.get("http://localhost:3333/api/generos");
+    genres.value = response.data;
+    console.log("generos", genres.value);
+  } catch (error: any) {
+    console.error("Erro ao obter generos:", error.message);
+  }
+});
 </script>
 
 <style scoped>

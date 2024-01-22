@@ -41,8 +41,8 @@
           </div>
 
           <!-- <div v-show="activeTab === 'newMusic'">
-            <p>Conteúdo da aba de Novas Músicas.</p>
-          </div> -->
+              <p>Conteúdo da aba de Novas Músicas.</p>
+            </div> -->
         </div>
       </div>
 

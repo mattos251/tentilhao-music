@@ -49,15 +49,15 @@ const routes = [
                 name: 'CadastroComposicao',
                 component: CadastroComposicao,
             },
-            {
-                path: '/feeds/:genero',
-                name: 'PaginaFeed',
-                component: PaginaFeed,
-                props: true,
-            },
         ]
     },
     
+    {
+        path: '/feeds/:genero',
+        name: 'PaginaFeed',
+        component: PaginaFeed,
+        props: true,
+    },
     
     {
         path: '/perfil',
