@@ -1,23 +1,47 @@
-// store.ts
+// store.js
 import { createStore } from 'vuex';
 
-export default createStore({
+const store = createStore({
   state: {
-    user: null, // Armazenará as informações do usuário
+    isPlaying: false, // ou um valor inicial adequado
   },
   mutations: {
-    setUser(state, user) {
-      console.log('Mutation setUser chamada. Novo usuário:', user);
-      state.user = user;
+    setIsPlaying(state, value) {
+      state.isPlaying = value;
     },
   },
   actions: {
-    // Pode conter ações relacionadas ao usuário, se necessário
+    playComposition({ commit, dispatch }, composition) {
+      // Adicione lógica adicional conforme necessário
+      commit('setIsPlaying', true);
+      dispatch('musicPlayer/selectComposition', composition, { root: true });
+    },
+    pauseComposition({ commit }) {
+      // Adicione lógica adicional conforme necessário
+      commit('setIsPlaying', false);
+    },
   },
-  getters: {
-    getUser(state) {
-      
-      return state.user;
-    } 
+  modules: {
+    musicPlayer: {
+      namespaced: true,
+      state: {
+        selectedComposition: null,
+      },
+      mutations: {
+        setSelectedComposition(state, composition) {
+          state.selectedComposition = composition;
+        },
+      },
+      actions: {
+        selectComposition({ commit }, composition) {
+          commit('setSelectedComposition', composition);
+        },
+      },
+      getters: {
+        getSelectedComposition: state => state.selectedComposition,
+      },
+    },
   },
 });
+
+export default store;

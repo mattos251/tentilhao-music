@@ -60,7 +60,6 @@ import { defineComponent } from "vue";
 import HeaderPerfil from "../components/HeaderPerfil.vue";
 import PlayerMusic from "@/components/PlayerMusic.vue";
 import MusicPlaylistUsuario from "@/components/MusicPlaylistUsuario.vue";
-import axios from "axios";
 
 export default defineComponent({
   name: "PaginaPerfil",
@@ -68,7 +67,6 @@ export default defineComponent({
     HeaderPerfil,
     PlayerMusic,
     MusicPlaylistUsuario,
-    // compositions: [],
   },
   data() {
     return {

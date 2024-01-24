@@ -7,7 +7,11 @@
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
           >
-            <svg-icon type="mdi" :path="Play"></svg-icon>
+            <svg-icon
+              type="mdi"
+              :path="Play"
+              @click="handlePlayClick(composition)"
+            ></svg-icon>
             <p>{{ composition.userName }}</p>
             <p>{{ composition.titulo }}</p>
             <div class="is-flex">
@@ -31,6 +35,7 @@ import { defineComponent } from "vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiAccountBox, mdiPlay, mdiSendCircleOutline } from "@mdi/js";
 import axios from "axios";
+import { mapActions } from "vuex";
 
 export default defineComponent({
   nome: "MusicPlaylistFeed",
@@ -45,6 +50,12 @@ export default defineComponent({
     };
   },
   methods: {
+    ...mapActions("musicPlayer", ["selectComposition"]),
+
+    handlePlayClick(composition: never) {
+      this.selectComposition(composition); // Chame a ação para selecionar a composição
+    },
+
     enviarMensagem(numeroTelefone: number) {
       const mensagem = "Olá, quero falar sobre a música!";
       const linkWhatsApp = `https://api.whatsapp.com/send?phone=${numeroTelefone}&text=${encodeURIComponent(

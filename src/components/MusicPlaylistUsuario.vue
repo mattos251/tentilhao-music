@@ -6,7 +6,11 @@
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
           >
-            <svg-icon type="mdi" :path="Play"></svg-icon>
+            <svg-icon
+              type="mdi"
+              :path="Play"
+              @click="handlePlayClick(composition)"
+            ></svg-icon>
             <p>{{ composition.userName }}</p>
             <p>{{ composition.titulo }}</p>
 
@@ -26,6 +30,7 @@ import { defineComponent } from "vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline } from "@mdi/js";
 import axios from "axios";
+import { mapActions } from "vuex";
 
 export default defineComponent({
   name: "MusicPlaylistFeed",
@@ -47,6 +52,12 @@ export default defineComponent({
   },
 
   methods: {
+    ...mapActions("musicPlayer", ["selectComposition"]),
+
+    handlePlayClick(composition: never) {
+      this.selectComposition(composition); // Chame a ação para selecionar a composição
+    },
+
     decodeToken(token: string) {
       try {
         const [header, payload] = token.split(".").slice(0, 2);
@@ -86,7 +97,7 @@ export default defineComponent({
         }
 
         this.compositions = response.data;
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar composições:", error);
       }

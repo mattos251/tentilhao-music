@@ -50,10 +50,42 @@ import {
   mdiVolumeHigh,
   mdiPauseBoxOutline,
 } from "@mdi/js";
+import { mapState, mapActions } from "vuex";
+
+interface Music {
+  paused: boolean;
+  element: HTMLAudioElement;
+}
+
+interface Seekbar {
+  max: number;
+  value: number;
+}
+
+interface Volume {
+  range: number;
+}
+
+const vuexMixin = {
+  computed: {
+    ...mapState(["isPlaying"]),
+    currentComposition(this: any) {
+      return this.$store.getters["musicPlayer/getSelectedComposition"];
+    },
+  },
+  methods: {
+    ...mapActions([
+      "playComposition",
+      "pauseComposition",
+      "musicPlayer/selectComposition",
+    ]),
+  },
+};
 
 export default {
   nome: "PlayMusic",
   components: { SvgIcon },
+  mixins: [vuexMixin], // Use o mixin aqui
   data() {
     return {
       Play: mdiPlay,
@@ -63,42 +95,98 @@ export default {
       Pausa: mdiPauseBoxOutline,
       music: {
         paused: true,
-        element: new Audio("https://hosseinghanbari.ir/other/music-player/autumn.mp3"),
-      },
+        element: new Audio(),
+      } as Music,
       seekbar: {
         max: 100,
         value: 0,
-      },
+      } as Seekbar,
       volume: {
         range: 50,
-      },
+      } as Volume,
       duration: "0:00",
       currentTime: "0:00",
     };
   },
   methods: {
-    // handlePlayPause() {
-    //   this.music.paused = !this.music.element.paused;
-    //   if (this.music.paused) {
-    //     this.music.element.pause();
-    //   } else {
-    //     this.music.element.play();
-    //   }
-    // },
-    // handleSeek() {
-    //   this.music!.element.currentTime = this.seekbar.value;
-    // },
-    // handleVolumeChange() {
-    //   this.music!.element.volume = this.volume.range / 100;
-    // },
-    // handlePrevious() {
-    //   // Adicione a lógica para reproduzir a faixa anterior
-    // },
-    // handleNext() {
-    //   // Adicione a lógica para reproduzir a próxima faixa
-    // },
+    handlePlayPause(this: PlayMusic): void {
+      if (this.isPlaying) {
+        this.pauseComposition();
+      } else {
+        this.playComposition(this.currentComposition);
+      }
+    },
+    playComposition(this: PlayMusic, composition: any): void {
+      if (
+        composition &&
+        typeof composition.audio === "string" &&
+        composition.audio.trim() !== ""
+      ) {
+        this.music.element.src = composition.audio;
+
+        if (this.isPlaying) {
+          this.pauseComposition();
+        }
+
+        this.music.element.play();
+        this["musicPlayer/selectComposition"](composition);
+      } else {
+        console.error('Composição inválida ou sem propriedade "audio".');
+      }
+    },
+    handleSeek(this: PlayMusic): void {
+      this.music.element.currentTime = this.seekbar.value;
+    },
+
+    handleVolumeChange(this: PlayMusic): void {
+      this.music.element.volume = this.volume.range / 100;
+    },
+    handlePrevious(this: PlayMusic): void {
+      // Adicione a lógica para reproduzir a faixa anterior
+    },
+    handleNext(this: PlayMusic): void {
+      // Adicione a lógica para reproduzir a próxima faixa
+    },
+    formatTime(time: number): string {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    },
+  },
+  mounted(this: PlayMusic): void {
+    this.music.element.addEventListener("error", (event) => {
+      console.error("Erro no elemento de áudio:", event);
+    });
+
+    this.music.element.addEventListener("timeupdate", () => {
+      this.currentTime = this.formatTime(this.music.element.currentTime);
+      this.seekbar.value = this.music.element.currentTime;
+    });
+
+    this.music.element.addEventListener("loadedmetadata", () => {
+      this.duration = this.formatTime(this.music.element.duration);
+      this.seekbar.max = this.music.element.duration;
+    });
+    // Adicione um listener para lidar com o término da faixa
+    this.music.element.addEventListener("ended", () => {
+      // Adicione a lógica para reproduzir a próxima faixa automaticamente
+      this.handleNext();
+    });
   },
 };
+
+// Adicione uma interface para o componente para melhorar a inferência de tipos
+interface PlayMusic {
+  [x: string]: any;
+  music: Music;
+  seekbar: Seekbar;
+  volume: Volume;
+  duration: string;
+  currentTime: string;
+  isPlaying: boolean; // Adicione a propriedade isPlaying à interface
+  playComposition: (composition: any) => void; // Adicione a assinatura de playComposition à interface
+  pauseComposition: () => void; // Adicione a assinatura de pauseComposition à interface
+}
 </script>
 
 <style setup>
@@ -132,44 +220,15 @@ export default {
   height: 2px;
   margin: 0px 15px 0px 10px;
 }
-.master_play .bar .bar-second {
-  position: absolute;
-  background: #fff;
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
   width: 100%;
-  height: 100%;
-  top: 0;
 }
-.master_play .bar .dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #fff;
-  left: 0%;
-  top: -1px;
-  transition: 1ms linear;
-}
-.master_play .bar .dot::before {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: 1px solid #fff;
-  left: -5px;
-  top: -6px;
-  box-shadow: inset 0px 0px 3px #fff;
-}
-.master_play .bar input {
-  position: absolute;
-  width: 100%;
-  top: -6px;
-  left: 0;
-  z-index: 99999999;
-  cursor: pointer;
-  transition: 3s linear;
-  opacity: 0;
-}
+
 .master_play .vol {
   position: relative;
   width: 100px;
@@ -186,46 +245,6 @@ export default {
 
 .vol path {
   fill: #fff;
-}
-
-.master_play .vol input {
-  position: absolute;
-  width: 100%;
-  top: -10px;
-  left: 0;
-  z-index: 99999999;
-  cursor: pointer;
-  transition: 3s linear;
-  opacity: 0;
-}
-
-.master_play .vol .Vol-second {
-  position: absolute;
-  background: #fff;
-  width: 100%;
-  height: 100%;
-  top: 0;
-}
-.master_play .vol .dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #fff;
-  left: 0%;
-  top: -1px;
-  transition: 1ms linear;
-}
-.master_play .vol .dot::before {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: 1px solid #fff;
-  left: -5px;
-  top: -6px;
-  box-shadow: inset 0px 0px 3px #fff;
 }
 
 .mix-title p {
