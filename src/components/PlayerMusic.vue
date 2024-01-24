@@ -1,42 +1,71 @@
 <template>
-  <div class="master_play is-flex is-align-items-center is-justify-content-center ml-6">
-    <img src="../assets/turmadopagode2.jpg" alt="" class="mr-3" />
+  <div class="player-footer">
+    <div class="container music-player">
+      <img src="../assets/turmadopagode2.jpg" alt="Album Cover" class="album-cover" />
 
-    <div class="mix-title">
-      <p class="title is-5">Subtitle 5</p>
-      <p class="subtitle is-6">Subtitle 5</p>
-    </div>
+      <div class="track-info">
+        <p class="title is-5">
+          {{ currentComposition?.titulo || "Titulo" }}
+        </p>
+        <p class="subtitle is-6">
+          {{ currentComposition?.userName || "Nome do Artista" }}
+        </p>
+      </div>
 
-    <div class="icons is-flex is-align-items-center ml-4 p-2">
-      <svg-icon type="mdi" :path="Left" @click="handlePrevious"></svg-icon>
-      <svg-icon type="mdi" :path="Play" @click="handlePlayPause"></svg-icon>
-      <svg-icon type="mdi" :path="Right" @click="handleNext"></svg-icon>
-    </div>
+      <div class="controls">
+        <svg-icon
+          class="control-icon"
+          type="mdi"
+          :path="Left"
+          @click="handlePrevious"
+        ></svg-icon>
+        <svg-icon
+          class="control-icon"
+          type="mdi"
+          :path="isPlaying ? Pausa : Play"
+          @click="handlePlayPause"
+        ></svg-icon>
+        <svg-icon
+          class="control-icon"
+          type="mdi"
+          :path="Right"
+          @click="handleNext"
+        ></svg-icon>
+      </div>
 
-    <span id="current-Start">{{ currentTime }}</span>
-    <div class="bar">
-      <input type="range" id="seek" min="0" @input="handleSeek" />
-      <div class="bar-second" id="bar-second"></div>
-      <div class="dot"></div>
-    </div>
-    <span id="current-end">{{ duration }}</span>
+      <div class="time">
+        <span class="current-time">{{ currentTime }}</span>
+        <div class="progress-bar">
+          <input
+            type="range"
+            class="seek-bar"
+            id="seek"
+            min="0"
+            :max="seekbar.max"
+            v-model="seekbar.value"
+            @input="handleSeek"
+          />
+          <!-- <div
+            class="bar-fill"
+            :style="{ width: (seekbar.value / seekbar.max) * 100 + '%' }"
+          ></div> -->
+          <div class="dot"></div>
+        </div>
+        <span class="duration">{{ duration }}</span>
+      </div>
 
-    <div class="icons is-flex is-align-items-center p-2">
-      <svg-icon type="mdi" :path="Pausa" @click="handlePlayPause"></svg-icon>
-    </div>
-
-    <div class="vol">
-      <svg-icon class="iconVol" type="mdi" :path="voluAlto"></svg-icon>
-      <input
-        type="range"
-        id="vol-seek"
-        min="0"
-        v-model="volume.range"
-        :max="100"
-        @input="handleVolumeChange"
-      />
-      <div class="Vol-second"></div>
-      <div class="dot" id="vol-dot"></div>
+      <div class="controls">
+        <svg-icon class="control-icon" type="mdi" :path="voluAlto"></svg-icon>
+        <input
+          type="range"
+          class="vol-seek"
+          id="vol-seek"
+          min="0"
+          v-model="volume.range"
+          :max="100"
+          @input="handleVolumeChange"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -110,6 +139,8 @@ export default {
   },
   methods: {
     handlePlayPause(this: PlayMusic): void {
+      console.log("isPlaying:", this.isPlaying);
+
       if (this.isPlaying) {
         this.pauseComposition();
       } else {
@@ -117,6 +148,7 @@ export default {
       }
     },
     playComposition(this: PlayMusic, composition: any): void {
+      console.log("Chamando playComposition");
       if (
         composition &&
         typeof composition.audio === "string" &&
@@ -124,15 +156,23 @@ export default {
       ) {
         this.music.element.src = composition.audio;
 
-        if (this.isPlaying) {
-          this.pauseComposition();
-        }
+        // Pausa a música se estiver tocando
+        this.pauseComposition();
+
+        // Atualiza o estado isPlaying para true antes de tocar
+        this.$store.commit("setIsPlaying", true);
 
         this.music.element.play();
         this["musicPlayer/selectComposition"](composition);
       } else {
         console.error('Composição inválida ou sem propriedade "audio".');
       }
+    },
+
+    // Atualize o método pauseComposition para pausar efetivamente a música e atualizar o estado isPlaying
+    pauseComposition(this: PlayMusic): void {
+      this.music.element.pause();
+      this.$store.commit("setIsPlaying", false);
     },
     handleSeek(this: PlayMusic): void {
       this.music.element.currentTime = this.seekbar.value;
@@ -143,9 +183,26 @@ export default {
     },
     handlePrevious(this: PlayMusic): void {
       // Adicione a lógica para reproduzir a faixa anterior
+      // const currentIndex = this.$store.state.musicPlayer.selectedCompositionIndex;
+      // const compositions = this.$store.state.musicPlayer.compositions;
+      // if (currentIndex > 0) {
+      //   const previousComposition = compositions[currentIndex - 1];
+      //   this.playComposition(previousComposition);
+      // }
     },
     handleNext(this: PlayMusic): void {
       // Adicione a lógica para reproduzir a próxima faixa
+      // const currentIndex = this.$store.state.musicPlayer.selectedCompositionIndex;
+      // const compositions = this.$store.state.musicPlayer.compositions;
+      // if (currentIndex < compositions.length - 1) {
+      //   const nextComposition = compositions[currentIndex + 1];
+      //   this.playComposition(nextComposition);
+      // } else {
+      //   // Se estiver na última faixa, pode implementar algum comportamento desejado,
+      //   // como reiniciar a reprodução desde o início ou parar a reprodução.
+      //   // Neste exemplo, apenas pausa a reprodução.
+      //   this.pauseComposition();
+      // }
     },
     formatTime(time: number): string {
       const minutes = Math.floor(time / 60);
@@ -172,6 +229,10 @@ export default {
       // Adicione a lógica para reproduzir a próxima faixa automaticamente
       this.handleNext();
     });
+    // this.music.element.addEventListener("pause", () => {
+    //   // Atualiza o estado isPlaying para false após a pausa
+    //   this.$store.commit("setIsPlaying", true);
+    // });
   },
 };
 
@@ -189,65 +250,73 @@ interface PlayMusic {
 }
 </script>
 
-<style setup>
-.master_play img {
-  height: 35px;
+<style scoped>
+.music-player {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  justify-content: center;
 }
-.master_play .icons {
+
+.player-footer {
+  display: flex;
+  background-color: #333;
+}
+
+.subtitle {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+.title {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.album-cover {
+  height: 48px;
+  border-radius: 7%;
+  margin-right: 10px;
+}
+
+/* .track-info {
+  flex-grow: 1;
+  text-align: left;
+} */
+
+.controls,
+.time {
+  display: flex;
+  align-items: center;
+}
+
+.control-icon {
   cursor: pointer;
-  outline: none;
+  margin: 0 5px;
+  color: white;
 }
-.icons path {
-  fill: #fff; /* Substitua pelo código de cor desejado */
-}
-.master_play .icons .bi:nth-child(2) {
-  border: 1px solid white;
-  transition: 0.3s linear;
-}
-.master_play span {
-  font-size: 11px;
-  width: 32px;
-  font-weight: 400px;
+
+.time span {
+  font-size: 12px;
   color: #fff;
-}
-.master_play #current-Start {
-  margin: 0px 0px 0px 20px;
+  margin: 0 5px;
 }
 
-.master_play .bar {
-  position: relative;
-  width: 43%;
-  height: 2px;
-  margin: 0px 15px 0px 10px;
-}
-
-button,
-input,
-select,
-textarea {
-  margin: 0;
+.seek-bar,
+.vol-seek {
   width: 100%;
 }
 
-.master_play .vol {
-  position: relative;
-  width: 100px;
-  height: 2px;
-  margin-left: 50px;
-  background: #4f9ac4;
-  cursor: pointer;
-}
-.master_play .vol .iconVol {
+.bar-fill {
   position: absolute;
-  top: -11px;
-  left: -30px;
+  height: 100%;
+  background-color: #4f9ac4; /* Altere para a cor desejada */
 }
 
-.vol path {
-  fill: #fff;
-}
-
-.mix-title p {
-  color: #fff;
+.vol-seek {
+  margin-left: 5px;
 }
 </style>

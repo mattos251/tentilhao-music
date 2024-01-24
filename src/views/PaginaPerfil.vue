@@ -94,7 +94,7 @@ export default defineComponent({
   padding: 0;
   margin: 0;
   width: 100%;
-  background-color: #4f9ac4; /* Adapte a cor de fundo conforme necessário */
+  /* Adapte a cor de fundo conforme necessário */
 }
 
 .about-User {
