@@ -7,20 +7,17 @@
         <div
           class="banner-central box is-flex is-justify-content-center is-align-items-center"
         >
+          <img :src="imagem" alt="" />
           <h1>{{ genero }}</h1>
         </div>
       </div>
 
       <div class="is-flex is-justify-content-center m-2">
-        <input class="input input-search" type="text" placeholder="Loading input" />;
+        <input class="input input-search" type="text" placeholder="Loading input" />
       </div>
 
-      <!-- <div class="is-flex is-justify-content-center">
-                <TopMusic/>
-            </div> -->
-
       <section>
-        <MusicPlaylistFeed />
+        <MusicPlaylistFeed :filteredSongs="filteredSongs" />
       </section>
     </div>
 
@@ -34,8 +31,6 @@
 import MusicPlaylistFeed from "@/components/MusicPlaylistFeed.vue";
 import PlayerMusic from "@/components/PlayerMusic.vue";
 import NavbarNavigation from "@/components/NavbarNavigation.vue";
-
-// import TopMusic from "@/components/TopMusic.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -45,8 +40,25 @@ export default defineComponent({
     PlayerMusic,
     NavbarNavigation,
   },
-  props: {
-    genero: String,
+  computed: {
+    genero(): string | null {
+      const value = this.$store.state.selectedGenre;
+      console.log("Valor do gênero:", value);
+      return value;
+    },
+    imagem(): string | null {
+      const value = this.$store.state.selectedImage;
+      console.log("Valor da imagem:", value);
+      return value;
+    },
+    filteredSongs() {
+      const genre = this.$store.state.selectedGenre;
+
+      // Filtre as músicas com base no gênero selecionado
+      return this.$store.state.songs.filter((song: { genre: any }) => {
+        return song.genre === genre;
+      });
+    },
   },
 });
 </script>
@@ -68,11 +80,16 @@ export default defineComponent({
   width: 50%;
 }
 
+img {
+  height: 200px;
+  width: 500px;
+  object-fit: fill;
+  position: absolute;
+}
+
 .banner-central {
-  width: 80%;
-  height: 120px;
-  background-image: url("../assets/turmadopagode2.jpg");
-  background-size: cover;
+  width: 60%;
+  height: 200px;
 }
 .banner-central h1 {
   font-size: x-large;

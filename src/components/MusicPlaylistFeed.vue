@@ -2,7 +2,6 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
-        <!-- v-for="musica in filtrarMusicasPorGenero" :key="musica.id" -->
         <li v-for="(composition, index) in compositions" :key="index">
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
@@ -15,13 +14,18 @@
             <p>{{ composition.userName }}</p>
             <p>{{ composition.titulo }}</p>
             <div class="is-flex">
-              <router-link to="/perfil">
+              <router-link
+                :to="{
+                  name: 'PaginaPerfilID',
+                  params: { userId: composition.usuario_id },
+                }"
+              >
                 <svg-icon type="mdi" :path="profile"></svg-icon>
               </router-link>
 
-              <a @click="enviarMensagem(composition.compositorPhoneNumber)">
+              <!-- <a @click="enviarMensagem(composition.compositorPhoneNumber)">
                 <svg-icon type="mdi" :path="Sendmessage"></svg-icon>
-              </a>
+              </a> -->
             </div>
           </div>
         </li>
@@ -40,6 +44,9 @@ import { mapActions } from "vuex";
 export default defineComponent({
   nome: "MusicPlaylistFeed",
   components: { SvgIcon },
+  props: {
+    genre: String, // Adicione esta propriedade para receber o gênero selecionado
+  },
   data() {
     return {
       Play: mdiPlay,
@@ -47,6 +54,7 @@ export default defineComponent({
       Sendmessage: mdiSendCircleOutline,
       idUser: "",
       compositions: [],
+      usuario: {},
     };
   },
   methods: {
@@ -65,27 +73,6 @@ export default defineComponent({
       // Abra o link do WhatsApp em uma nova janela ou guia
       window.open(linkWhatsApp, "_blank");
     },
-
-    // isProfileOfCurrentUser(compositions) {
-    //   const token = localStorage.getItem("token");
-
-    //   if (token) {
-    //     try {
-    //       // Decodifica o token (assumindo que seja um token JWT)
-    //       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-
-    //       // Agora você pode acessar as informações do usuário
-    //       this.idUser = decodedToken.userId;
-    //     } catch (error) {
-    //       console.error("Erro ao decodificar o token:", error);
-    //     }
-    //   } else {
-    //     console.log("Nenhum token encontrado no localStorage");
-    //   }
-
-    //   const usuarioIdAtual = this.idUser; // Obtenha o ID do usuário atual da sua aplicação;
-    //   return compositions.usuario_id === usuarioIdAtual;
-    // },
   },
   async mounted() {
     try {
@@ -94,10 +81,15 @@ export default defineComponent({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }); // Endpoint para obter as composições
+      });
 
-      // Iterar sobre as composições para buscar o nome do usuário
-      for (const composition of response.data) {
+      // Filtrar composições com base no gênero selecionado
+      const filteredCompositions = response.data.filter(
+        (composition: { genero: string | undefined }) => composition.genero === this.genre
+      );
+
+      // Iterar sobre as composições filtradas para buscar o nome do usuário
+      for (const composition of filteredCompositions) {
         const userResponse = await axios.get(
           `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
           {
@@ -111,7 +103,7 @@ export default defineComponent({
         composition.userName = userResponse.data.usuario.nome_completo;
       }
 
-      this.compositions = response.data;
+      this.compositions = filteredCompositions;
     } catch (error: any) {
       console.error("Erro ao obter composições:", error.message);
     }

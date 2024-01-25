@@ -4,10 +4,19 @@ import { createStore } from 'vuex';
 const store = createStore({
   state: {
     isPlaying: false, // ou um valor inicial adequado
+    selectedGenre: null,
+    selectedImage: null,
+    songs: []
   },
   mutations: {
     setIsPlaying(state, value) {
       state.isPlaying = value;
+    },
+    setGenre(state, genre) {
+      state.selectedGenre = genre;
+    },
+    setImage(state, image) {
+      state.selectedImage = image;
     },
   },
   actions: {
@@ -19,6 +28,10 @@ const store = createStore({
     pauseComposition({ commit }) {
       // Adicione lógica adicional conforme necessário
       commit('setIsPlaying', false);
+    },
+    updateGenreAndImage({ commit }, { genre, image }) {
+      commit('setGenre', genre);
+      commit('setImage', image);
     },
   },
   modules: {

@@ -1,7 +1,11 @@
 <template>
   <div class="player-footer">
     <div class="container music-player">
-      <img src="../assets/turmadopagode2.jpg" alt="Album Cover" class="album-cover" />
+      <img
+        :src="`${currentComposition?.imagem_capa || profilee}`"
+        alt="Album Cover"
+        class="album-cover"
+      />
 
       <div class="track-info">
         <p class="title is-5">
@@ -122,6 +126,7 @@ export default {
       Right: mdiArrowRight,
       voluAlto: mdiVolumeHigh,
       Pausa: mdiPauseBoxOutline,
+      profilee: require("@/assets/OIP.jpg"),
       music: {
         paused: true,
         element: new Audio(),

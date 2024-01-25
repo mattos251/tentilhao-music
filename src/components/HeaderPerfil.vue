@@ -1,31 +1,29 @@
 <template>
-  <div class="columns is-mobile header-perfil">
+  <div class="header-perfil">
     <div class="columns is-centered">
       <div class="column is-half-tablet is-one-third-desktop">
-        <div class="">
-          <div class="is-flex">
-            <div class="midia-contant">
-              <figure class="image is-96x96">
-                <img class="image-perfil" src="../assets/perfil.jpg" alt="User Image" />
-              </figure>
-            </div>
-            <div class="media-content is-align-self-center">
-              <p class="title is-4">{{ usuario.nome }}</p>
-              <p class="subtitle is-6">
-                {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
-              </p>
-            </div>
+        <div class="is-flex">
+          <div class="midia-contant">
+            <figure class="image is-96x96">
+              <img class="image-perfil" src="@/assets/perfil.jpg" alt="User Image" />
+            </figure>
           </div>
-          <div class="navegation">
-            <ul class="is-flex is-justify-content-space-around">
-              <router-link to="/homepage">
-                <li>Home</li>
-              </router-link>
-              <router-link to="/feeds">
-                <li>Feed</li>
-              </router-link>
-            </ul>
+          <div class="media-content is-align-self-center">
+            <p class="title is-4">{{ usuario.nome }}</p>
+            <p class="subtitle is-6">
+              {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
+            </p>
           </div>
+        </div>
+        <div class="navegation">
+          <ul class="is-flex is-justify-content-space-around">
+            <router-link to="/homepage">
+              <li>Home</li>
+            </router-link>
+            <router-link to="/feeds">
+              <li>Feed</li>
+            </router-link>
+          </ul>
         </div>
       </div>
 
@@ -33,7 +31,7 @@
         <div class="is-flex is-justify-content-end">
           <figure class="image logo-perfil">
             <img
-              src="../assets/TENTILHO Logo - Original with Transparent Background - 5000x5000 (2).png"
+              src="@/assets/TENTILHO Logo - Original with Transparent Background - 5000x5000 (2).png"
               alt="Logo"
             />
           </figure>
@@ -79,43 +77,31 @@ export default {
 </script>
 
 <style scoped>
-.navegation {
-  width: 50%;
-  position: relative;
-  top: 20px;
-}
-.navegation li {
-  padding-left: 10px;
-  color: aliceblue;
-}
-.image-perfil {
-  height: 100%;
-  border-radius: 100%;
-}
-
 .header-perfil {
   background: #4f9ac4;
-  padding: 30px;
-  border-bottom: 1px solid #ffff;
+  padding: 20px; /* Reduzi o padding para tornar mais compacto */
+  border-bottom: 1px solid #ffffff; /* Corrigi a cor da borda para branco */
 }
 
-.media-content p {
+.navegation {
+  width: 100%; /* Ajustei a largura para ocupar 100% do container */
+  margin-top: 20px; /* Adicionei um espaço superior */
+}
+
+.navegation li {
+  padding: 10px;
   color: white;
-  padding-left: 10px;
+  font-weight: bold; /* Adicionei negrito para melhor legibilidade */
 }
+
+.image-perfil {
+  height: auto; /* Corrigi a altura para ser automática */
+  max-width: 100%; /* Garante que a imagem não ultrapasse o contêiner */
+  border-radius: 50%; /* Corrigi o valor do raio para 50% */
+}
+
 .logo-perfil {
-  display: flex;
-  justify-content: center;
-  width: 45%;
+  width: 80%; /* Ajustei a largura do logo para 80% do contêiner */
   height: auto;
-}
-
-.contente-perfil {
-  display: flex;
-  justify-content: center;
-}
-
-.linha {
-  border-bottom: 1px solid red;
 }
 </style>

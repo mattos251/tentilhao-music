@@ -2,7 +2,52 @@
   <div>
     <div class="columns is-multiline">
       <div class="column is-full">
-        <HeaderPerfil />
+        <div class="columns is-mobile header-perfil">
+          <div class="columns is-centered">
+            <div class="column is-half-tablet is-one-third-desktop">
+              <div class="">
+                <div class="is-flex">
+                  <div class="midia-contant">
+                    <figure class="image is-96x96">
+                      <img
+                        class="image-perfil"
+                        src="../assets/perfil.jpg"
+                        alt="User Image"
+                      />
+                    </figure>
+                  </div>
+                  <div class="media-content is-align-self-center">
+                    <p class="title is-4">{{ usuario.nome_completo }}</p>
+                    <p class="subtitle is-6">
+                      {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
+                    </p>
+                  </div>
+                </div>
+                <div class="navegation">
+                  <ul class="is-flex is-justify-content-space-around">
+                    <router-link to="/homepage">
+                      <li>Home</li>
+                    </router-link>
+                    <router-link to="/feeds">
+                      <li>Feed</li>
+                    </router-link>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="column is-one-third-desktop is-align-self-center">
+              <div class="is-flex is-justify-content-end">
+                <figure class="image logo-perfil">
+                  <img
+                    src="../assets/TENTILHO Logo - Original with Transparent Background - 5000x5000 (2).png"
+                    alt="Logo"
+                  />
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column is-full">
         <div>
@@ -20,7 +65,29 @@
           </div>
 
           <div v-show="activeTab === 'music'">
-            <MusicPlaylistUsuario />
+            <!-- <MusicPlaylistUsuario /> -->
+            <div class="music-playlist is-flex is-justify-content-center">
+              <div class="playlist-container is-flex is-justify-content-center p-4">
+                <ul class="playlist">
+                  <li v-for="(composition, index) in compositions" :key="index">
+                    <div
+                      class="icons is-flex is-align-items-center is-justify-content-space-between"
+                    >
+                      <svg-icon
+                        type="mdi"
+                        :path="Play"
+                        @click="handlePlayClick(composition)"
+                      ></svg-icon>
+                      <p>{{ composition.userName }}</p>
+                      <p>{{ composition.titulo }}</p>
+                      <a @click="enviarMensagem(numero_telefone)">
+                        <svg-icon type="mdi" :path="Sendmessage"></svg-icon>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div v-show="activeTab === 'about'" class="about-User">
@@ -57,33 +124,124 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HeaderPerfil from "../components/HeaderPerfil.vue";
 import PlayerMusic from "@/components/PlayerMusic.vue";
-import MusicPlaylistUsuario from "@/components/MusicPlaylistUsuario.vue";
+import SvgIcon from "@jamescoyle/vue-icon";
+import { mdiPlay, mdiDelete, mdiSquareEditOutline, mdiSendCircleOutline } from "@mdi/js";
+import { mapActions } from "vuex";
+
 import axios from "axios";
 
 export default defineComponent({
-  name: "PaginaPerfil",
+  name: "PaginaPerfilID",
   components: {
-    HeaderPerfil,
     PlayerMusic,
-    MusicPlaylistUsuario,
-    // compositions: [],
+    SvgIcon,
   },
   data() {
     return {
       activeTab: "music",
+      Play: mdiPlay,
+      Delete: mdiDelete,
+      Editar: mdiSquareEditOutline,
+      Sendmessage: mdiSendCircleOutline,
+      numero_telefone: "",
+      compositions: [],
       tabs: [
         { name: "music", label: "Music" },
         { name: "about", label: "Sobre" },
         // { name: "newMusic", label: "Novas músicas" },
       ],
+      usuario: {
+        nome: "",
+        tipo_usuario: "",
+        numero_telefone: "", // Inicializar com um valor padrão ou vazio
+        // Adicione outros campos do usuário conforme necessário
+      },
     };
+  },
+  async mounted() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const userId = this.$route.params.userId; // Obtenha o userId da rota
+      this.fetchComposicoes(userId, token); // Passe o userId para a função de busca
+    }
+
+    const userId = this.$route.params.userId;
+
+    const response = await axios.get(`http://localhost:3333/api/usuarios/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    this.usuario = response.data.usuario;
+    this.numero_telefone = this.usuario.numero_telefone;
   },
 
   methods: {
     changeTab(tabName: string) {
       this.activeTab = tabName;
+    },
+
+    ...mapActions("musicPlayer", ["selectComposition"]),
+
+    handlePlayClick(composition: never) {
+      this.selectComposition(composition); // Chame a ação para selecionar a composição
+    },
+
+    decodeToken(token: string) {
+      try {
+        const [header, payload] = token.split(".").slice(0, 2);
+        const decodedPayload = JSON.parse(atob(payload));
+        console.error("token:", decodedPayload);
+        return decodedPayload.userId;
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+        return null;
+      }
+    },
+
+    async fetchComposicoes(userId: any, token: string) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3333/api/composicoesUser/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        for (const composition of response.data) {
+          const userResponse = await axios.get(
+            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          // Adicionar o nome do usuário à composição
+          composition.userName = userResponse.data.usuario.nome_completo;
+        }
+
+        this.compositions = response.data;
+        // console.log(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar composições:", error);
+      }
+    },
+
+    enviarMensagem(numero_telefone: string) {
+      const mensagem = "Olá, quero falar sobre a música!";
+      const linkWhatsApp = `https://api.whatsapp.com/send?phone=${numero_telefone}&text=${encodeURIComponent(
+        mensagem
+      )}`;
+
+      // Abra o link do WhatsApp em uma nova janela ou guia
+      window.open(linkWhatsApp, "_blank");
     },
   },
 });
@@ -105,5 +263,72 @@ export default defineComponent({
 }
 .about-User .area-about {
   width: 60%;
+}
+
+.navegation {
+  width: 50%;
+  position: relative;
+  top: 20px;
+}
+.navegation li {
+  padding-left: 10px;
+  color: aliceblue;
+}
+.image-perfil {
+  height: 100%;
+  border-radius: 100%;
+}
+
+.header-perfil {
+  background: #4f9ac4;
+  padding: 30px;
+  border-bottom: 1px solid #ffff;
+}
+
+.media-content p {
+  color: white;
+  padding-left: 10px;
+}
+.logo-perfil {
+  display: flex;
+  justify-content: center;
+  width: 45%;
+  height: auto;
+}
+
+.contente-perfil {
+  display: flex;
+  justify-content: center;
+}
+
+.playlist-container {
+  border: 1px solid #f5f5f5;
+  opacity: 100%;
+  width: 50%;
+  border-radius: 5px;
+  height: 290px;
+  overflow-y: overlay;
+  margin-top: 20px;
+}
+
+.playlist-container .playlist {
+  width: 100%;
+}
+
+.playlist .icons p {
+  color: black;
+}
+
+.playlist li {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3636362b;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.playlist li path {
+  fill: #000;
+  cursor: pointer;
 }
 </style>

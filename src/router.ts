@@ -8,6 +8,7 @@ import PaginaFeed from './views/PaginaFeed.vue';
 import PageCadastroUsuario from './views/PageCadastroUsuario.vue';
 import RegisterUsuario from './components/RegisterUsuario.vue';
 import LoginUsuario from './components/LoginUsuario.vue'
+import PaginaPerfilID from './views/PerfilUsuarioId.vue'
 
 
 const routes = [
@@ -58,6 +59,8 @@ const routes = [
         component: PaginaFeed,
         props: true,
     },
+
+    
     
     {
         path: '/perfil',
@@ -70,8 +73,17 @@ const routes = [
                 component: PaginaPerfil,
             },
         ]
-
     },
+
+    {
+    
+        path: '/perfilID/:userId',
+        name: 'PaginaPerfilID',
+        component: PaginaPerfilID,
+    
+    }
+
+
 ]
 
 const router = createRouter({
