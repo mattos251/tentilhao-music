@@ -4,10 +4,8 @@
       <div class="area-navegacao">
         <div class="perfil-usuario">
           <figure class="image is-128x150">
-            <img
-              class="is-rounded"
-              src="https://bulma.io/images/placeholders/128x128.png"
-            />
+            <img class="is-rounded" :src="usuario.imagem_perfil" />
+            <!-- https://bulma.io/images/placeholders/128x128.png -->
           </figure>
         </div>
 
@@ -44,8 +42,8 @@ export default defineComponent({
   data() {
     return {
       usuario: {
-        nome: "", // Inicializar com um valor padrão ou vazio
-        // Adicione outros campos do usuário conforme necessário
+        nome: "",
+        imagem_perfil: "",
       },
     };
   },
@@ -61,6 +59,7 @@ export default defineComponent({
 
         // Agora você pode acessar as informações do usuário
         this.usuario.nome = decodedToken.nome_completo;
+        this.usuario.imagem_perfil = decodedToken.imagem_perfil;
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
       }

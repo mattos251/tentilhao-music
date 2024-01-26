@@ -73,11 +73,6 @@ export default defineComponent({
     const store = useStore();
 
     const EnvioLogin = async () => {
-      console.log("Requisição de login recebida:", {
-        email: email.value,
-        senha: password.value,
-      });
-
       try {
         const response = await axios.post("http://localhost:3333/api/login", {
           email: email.value,

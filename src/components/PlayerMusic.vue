@@ -153,7 +153,6 @@ export default {
       }
     },
     playComposition(this: PlayMusic, composition: any): void {
-      console.log("Chamando playComposition");
       if (
         composition &&
         typeof composition.audio === "string" &&

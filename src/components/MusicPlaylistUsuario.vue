@@ -6,17 +6,21 @@
           <div
             class="icons is-flex is-align-items-center is-justify-content-space-between"
           >
+            <div class="img_capa">
+              <img :src="composition.imagem_capa" alt="" />
+            </div>
             <svg-icon
               type="mdi"
               :path="Play"
               @click="handlePlayClick(composition)"
             ></svg-icon>
+
             <p>{{ composition.userName }}</p>
             <p>{{ composition.titulo }}</p>
 
             <div class="is-flex">
               <svg-icon type="mdi" :path="Delete"></svg-icon>
-              <svg-icon type="mdi" :path="Editar"></svg-icon>
+              <svg-icon @click="openModal" type="mdi" :path="Editar"></svg-icon>
             </div>
           </div>
         </li>
@@ -41,6 +45,7 @@ export default defineComponent({
       Delete: mdiDelete,
       Editar: mdiSquareEditOutline,
       compositions: [],
+      isModalOpen: false,
     };
   },
   mounted() {
@@ -97,10 +102,17 @@ export default defineComponent({
         }
 
         this.compositions = response.data;
-        // console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar composições:", error);
       }
+    },
+
+    openModal() {
+      this.isModalOpen = true;
+      console.log();
+    },
+    closeModal() {
+      this.isModalOpen = false;
     },
   },
 });
@@ -136,5 +148,22 @@ export default defineComponent({
 .playlist li path {
   fill: #000;
   cursor: pointer;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.img_capa {
+  display: flex;
+  align-items: center;
+  width: 25px;
+  height: auto;
 }
 </style>

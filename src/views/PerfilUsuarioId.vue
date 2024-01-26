@@ -149,21 +149,19 @@ export default defineComponent({
       tabs: [
         { name: "music", label: "Music" },
         { name: "about", label: "Sobre" },
-        // { name: "newMusic", label: "Novas músicas" },
       ],
       usuario: {
         nome: "",
         tipo_usuario: "",
-        numero_telefone: "", // Inicializar com um valor padrão ou vazio
-        // Adicione outros campos do usuário conforme necessário
+        numero_telefone: "",
       },
     };
   },
   async mounted() {
     const token = localStorage.getItem("token");
     if (token) {
-      const userId = this.$route.params.userId; // Obtenha o userId da rota
-      this.fetchComposicoes(userId, token); // Passe o userId para a função de busca
+      const userId = this.$route.params.userId;
+      this.fetchComposicoes(userId, token);
     }
 
     const userId = this.$route.params.userId;
@@ -186,7 +184,7 @@ export default defineComponent({
     ...mapActions("musicPlayer", ["selectComposition"]),
 
     handlePlayClick(composition: never) {
-      this.selectComposition(composition); // Chame a ação para selecionar a composição
+      this.selectComposition(composition);
     },
 
     decodeToken(token: string) {
@@ -228,7 +226,6 @@ export default defineComponent({
         }
 
         this.compositions = response.data;
-        // console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar composições:", error);
       }
@@ -239,8 +236,6 @@ export default defineComponent({
       const linkWhatsApp = `https://api.whatsapp.com/send?phone=${numero_telefone}&text=${encodeURIComponent(
         mensagem
       )}`;
-
-      // Abra o link do WhatsApp em uma nova janela ou guia
       window.open(linkWhatsApp, "_blank");
     },
   },

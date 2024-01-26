@@ -134,25 +134,17 @@ const isValidForm = computed(() => {
 
 const submitComposition = async () => {
   try {
-    // Fazer upload do áudio
     const audioStorageRef = storageRef(storage, `audio/${audioFile.value.name}`);
     const audioUploadTask = uploadBytesResumable(audioStorageRef, audioFile.value);
 
-    // Fazer upload da imagem
     const imageStorageRef = storageRef(storage, `images/${imageFile.value.name}`);
     const imageUploadTask = uploadBytesResumable(imageStorageRef, imageFile.value);
 
-    // Aguardar a conclusão de ambos os uploads
     await Promise.all([audioUploadTask, imageUploadTask]);
 
-    // Agora você pode acessar as URLs de download dos arquivos se necessário
     const audioUrl = await getDownloadURL(audioStorageRef);
 
     const imageUrl = await getDownloadURL(imageStorageRef);
-
-    // Aqui você pode realizar qualquer lógica adicional, como enviar os URLs para o seu backend
-    // console.log("Áudio URL:", audioDownloadURL);
-    // console.log("Imagem URL:", imageDownloadURL);
     const token1 = localStorage.getItem("token");
 
     if (token1) {
@@ -160,9 +152,7 @@ const submitComposition = async () => {
         // Decodifica o token (assumindo que seja um token JWT)
         const decodedToken = JSON.parse(atob(token1.split(".")[1]));
 
-        // Agora você pode acessar as informações do usuário
         usuaID.value = decodedToken.userId;
-        console.log("pao com ovo", usuaID.value);
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
       }
@@ -179,8 +169,6 @@ const submitComposition = async () => {
       texto: compositionDescription.value,
     };
 
-    console.log(compositionData);
-
     const token = localStorage.getItem("token");
     axios.post("http://localhost:3333/api/cadastro/ComposicaoUser", compositionData, {
       headers: {
@@ -190,10 +178,8 @@ const submitComposition = async () => {
     });
 
     router.push({ path: "/perfil" });
-    // Continuar com a lógica do seu aplicativo (por exemplo, enviar dados para o backend)
   } catch (error) {
     console.error("Erro durante o upload:", error.message);
-    // Lógica de tratamento de erro, se necessário
   }
 };
 
@@ -201,7 +187,6 @@ onMounted(async () => {
   try {
     const response = await axios.get("http://localhost:3333/api/generos");
     genres.value = response.data;
-    console.log("generos", genres.value);
   } catch (error: any) {
     console.error("Erro ao obter generos:", error.message);
   }

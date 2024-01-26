@@ -28,7 +28,6 @@ export default defineComponent({
     try {
       const response = await axios.get("http://localhost:3333/api/generos");
       this.cards = response.data;
-      // console.log("generos", this.cards);
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
     }

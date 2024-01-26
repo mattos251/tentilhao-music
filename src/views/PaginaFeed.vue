@@ -43,12 +43,10 @@ export default defineComponent({
   computed: {
     genero(): string | null {
       const value = this.$store.state.selectedGenre;
-      console.log("Valor do gênero:", value);
       return value;
     },
     imagem(): string | null {
       const value = this.$store.state.selectedImage;
-      console.log("Valor da imagem:", value);
       return value;
     },
     filteredSongs() {
