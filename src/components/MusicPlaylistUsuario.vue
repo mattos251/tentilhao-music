@@ -1,4 +1,52 @@
 <template>
+  <div class="modal" :class="{ 'is-active': showModalDelete }">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Modal title</p>
+        <button
+          class="delete"
+          aria-label="close"
+          @click="openModal('del')"
+        ></button>
+      </header>
+      <section class="modal-card-body">
+        Tem certeza que deseja remover esta música?
+      </section>
+      <footer class="modal-card-foot is-justify-content-flex-end">
+        <button class="button is-danger">Remover musica</button>
+        <button class="button" @click="openModal('del')">Cancelar</button>
+      </footer>
+    </div>
+  </div>
+
+  <cadastro-composicao
+    class="modal"
+    :class="{ 'is-active': showModalUpdate }"
+  /><!-- dar um geito de fechar o modal, põe um botão de fechar -->
+  <!-- <div class="modal" :class="{ 'is-active': showModalUpdate }">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Modal title</p>
+        <button
+          class="delete"
+          aria-label="close"
+          @click="openModal('put')"
+        ></button>
+      </header>
+      <section class="modal-card-body">
+        Tem certeza que deseja remover esta música?
+      </section>
+      <footer class="modal-card-foot is-justify-content-flex-end">
+        <button class="button is-success">Atualizar</button>
+        <button class="button is-danger" @click="openModal('put')">
+          Cancelar
+        </button>
+      </footer>
+    </div>
+  </div> -->
+
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
@@ -19,8 +67,16 @@
             <p>{{ composition.titulo }}</p>
 
             <div class="is-flex">
-              <svg-icon type="mdi" :path="Delete"></svg-icon>
-              <svg-icon @click="openModal" type="mdi" :path="Editar"></svg-icon>
+              <svg-icon
+                type="mdi"
+                :path="Delete"
+                @click="openModal('del')"
+              ></svg-icon>
+              <svg-icon
+                type="mdi"
+                :path="Editar"
+                @click="openModal('put')"
+              ></svg-icon>
             </div>
           </div>
         </li>
@@ -35,10 +91,11 @@ import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline } from "@mdi/js";
 import axios from "axios";
 import { mapActions } from "vuex";
+import CadastroComposicao from "@/views/CadastroComposicao.vue";
 
 export default defineComponent({
   name: "MusicPlaylistFeed",
-  components: { SvgIcon },
+  components: { SvgIcon, CadastroComposicao },
   data() {
     return {
       Play: mdiPlay,
@@ -46,6 +103,8 @@ export default defineComponent({
       Editar: mdiSquareEditOutline,
       compositions: [],
       isModalOpen: false,
+      showModalDelete: false,
+      showModalUpdate: false,
     };
   },
   mounted() {
@@ -57,6 +116,11 @@ export default defineComponent({
   },
 
   methods: {
+    openModal(modalType: string) {
+      modalType == "del"
+        ? (this.showModalDelete = !this.showModalDelete)
+        : (this.showModalUpdate = !this.showModalUpdate);
+    },
     ...mapActions("musicPlayer", ["selectComposition"]),
 
     handlePlayClick(composition: never) {
@@ -107,10 +171,10 @@ export default defineComponent({
       }
     },
 
-    openModal() {
-      this.isModalOpen = true;
-      console.log();
-    },
+    // openModal() {
+    //   this.isModalOpen = true;
+    //   console.log();
+    // },
     closeModal() {
       this.isModalOpen = false;
     },
@@ -149,7 +213,7 @@ export default defineComponent({
   fill: #000;
   cursor: pointer;
 }
-.modal {
+/* .modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -158,7 +222,7 @@ export default defineComponent({
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+} */
 
 .img_capa {
   display: flex;
