@@ -166,6 +166,7 @@ export default defineComponent({
         }
 
         this.compositions = response.data;
+        console.log(this.compositions);
       } catch (error) {
         console.error("Erro ao buscar composições:", error);
       }

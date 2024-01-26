@@ -3,10 +3,11 @@
     <div class="column is-12">
       <div class="area-navegacao">
         <div class="perfil-usuario">
-          <figure class="image is-128x150">
-            <img class="is-rounded" :src="usuario.imagem_perfil" />
-            <!-- https://bulma.io/images/placeholders/128x128.png -->
-          </figure>
+          <router-link to="/perfil">
+            <figure class="image is-128x150">
+              <img class="is-rounded" :src="usuario.imagem_perfil" />
+            </figure>
+          </router-link>
         </div>
 
         <ul class="menu-nav is-justify-content-center">
@@ -49,7 +50,6 @@ export default defineComponent({
   },
 
   mounted() {
-    // Recupera o token do localStorage
     const token = localStorage.getItem("token");
 
     if (token) {
