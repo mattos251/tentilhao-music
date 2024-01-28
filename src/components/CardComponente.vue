@@ -1,9 +1,13 @@
 <template>
   <div class="container is-full is-justify-content-space-around cards-lists">
-    <div class="columns is-multiline is-flex">
-      <div v-for="card in cards" :key="card.id" class="card-box column is-one-fifth">
+    <div class="columns is-multiline is-flex is-justify-content-space-around">
+      <div
+        v-for="card in cards"
+        :key="card.id"
+        class="card-box column is-one-fifth-desktop is-one-third-tablet is-half-mobile"
+      >
         <div @click="navigateToFeed(card)" class="card-content title-card">
-          <div class="image is-5by4">
+          <div class="image is-1by1">
             <img :src="card.imagem_genero" alt="Card Image" />
           </div>
           <h2>{{ card.genero }}</h2>
@@ -52,9 +56,9 @@ export default defineComponent({
 
 .cards-lists {
   display: flex;
-  height: 20px;
+  width: auto;
+  height: auto;
   cursor: pointer;
-  /* ou outro valor conforme necessário */
 }
 
 .title-card h2 {
@@ -67,7 +71,22 @@ export default defineComponent({
 .card-box {
   border: 1px solid #0093ff42;
   border-radius: 18px;
-  width: 10%;
-  margin: 10px;
+  margin: 2px;
+  width: 20px;
+  height: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .column .is-half-mobile {
+    flex: none;
+    width: 30%;
+  }
+  .title-generos {
+    display: flex;
+    text-align: center;
+    margin-top: 50px;
+    color: #519bc4;
+    margin-bottom: 30px;
+  }
 }
 </style>

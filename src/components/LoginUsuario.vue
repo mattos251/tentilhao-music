@@ -165,4 +165,15 @@ export default defineComponent({
   background-color: #04314afd;
   color: white;
 }
+
+@media screen and (max-width: 768px) {
+  .box-register[data-v-0e286d35] {
+    background-color: rgb(255 255 255 / 6%);
+    padding: 20px;
+    position: fixed;
+    border-radius: 8px;
+    width: 80%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+}
 </style>

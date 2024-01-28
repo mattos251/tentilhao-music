@@ -1,39 +1,39 @@
 <template>
   <div class="header-perfil">
     <div class="columns is-centered">
-      <div class="column is-half-tablet is-one-third-desktop">
-        <div class="is-flex">
-          <div class="midia-contant">
-            <figure class="image is-96x96">
-              <img class="image-perfil" :src="usuario.imagem_perfil" alt="User Image" />
+      <div class="user-card column is-half-tablet is-one-third-desktop">
+        <div class="user-info is-flex">
+          <div>
+            <figure class="image is-128x128 figure-image">
+              <img
+                class="profile-image is-rounded"
+                :src="usuario.imagem_perfil"
+                alt="User Image"
+              />
             </figure>
           </div>
-          <div class="media-content is-align-self-center text-perfil">
-            <p class="title is-4">{{ usuario.nome }}</p>
-            <p class="subtitle is-6">
+          <div class="text-info is-align-self-center">
+            <p class="title-profile">{{ usuario.nome }}</p>
+            <p class="subtitle-profile">
               {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
             </p>
+            <div class="links-pages">
+              <ul class="is-flex">
+                <router-link to="/homepage" class="nav-link">
+                  <li>Home</li>
+                </router-link>
+                <router-link to="/feeds" class="nav-link">
+                  <li>Feed</li>
+                </router-link>
+              </ul>
+            </div>
           </div>
         </div>
-        <div class="navegation">
-          <ul class="is-flex is-justify-content-space-around">
-            <router-link to="/homepage">
-              <li>Home</li>
-            </router-link>
-            <router-link to="/feeds">
-              <li>Feed</li>
-            </router-link>
-          </ul>
-        </div>
       </div>
-
       <div class="column is-one-third-desktop is-align-self-center">
         <div class="is-flex is-justify-content-end">
           <figure class="image logo-perfil">
-            <img
-              src="@/assets/TENTILHO Logo - Original with Transparent Background - 5000x5000 (2).png"
-              alt="Logo"
-            />
+            <img src="../assets/Tentilhao.png" alt="Logo" />
           </figure>
         </div>
       </div>
@@ -41,22 +41,54 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import axios from "axios";
+
 export default {
   name: "HeaderPerfil",
+
   data() {
     return {
       usuario: {
         nome: "",
         tipo_usuario: "",
-        imagem_perfil: "", // Inicializar com um valor padrão ou vazio
-        // Adicione outros campos do usuário conforme necessário
+        imagem_perfil: "",
+        userId: "",
       },
     };
   },
 
+  methods: {
+    async fetchUserData() {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        const UserId = this.usuario.userId;
+        try {
+          const response = await axios.get(
+            `http://localhost:3333/api/usuarios/${UserId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const userData = response.data;
+
+          this.usuario.nome = userData.usuario.nome_completo;
+          this.usuario.tipo_usuario = userData.usuario.tipo_usuario_id;
+          this.usuario.imagem_perfil = userData.usuario.imagem_perfil;
+        } catch (error) {
+          console.error("Erro ao obter dados do usuário:", error);
+        }
+      } else {
+        console.log("Nenhum token encontrado no localStorage");
+      }
+    },
+  },
+
   mounted() {
-    // Recupera o token do localStorage
     const token = localStorage.getItem("token");
 
     if (token) {
@@ -65,16 +97,20 @@ export default {
         const decodedToken = JSON.parse(atob(token.split(".")[1]));
 
         // Agora você pode acessar as informações do usuário
-        this.usuario.nome = decodedToken.nome_completo;
-        this.usuario.tipo_usuario = decodedToken.tipo_usuario_id;
-        this.usuario.imagem_perfil = decodedToken.imagem_perfil;
-        console.log(this.usuario.imagem_perfil);
+        this.usuario.userId = decodedToken.userId;
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
       }
     } else {
       console.log("Nenhum token encontrado no localStorage");
     }
+
+    this.fetchUserData(); // Chama a função ao montar o componente
+
+    // Configura um intervalo de 5 minutos (300000 milissegundos) para buscar dados regularmente
+    setInterval(() => {
+      this.fetchUserData();
+    }, 300000); // ajuste conforme necessário
   },
 };
 </script>
@@ -86,22 +122,30 @@ export default {
   border-bottom: 1px solid #ffffff; /* Corrigi a cor da borda para branco */
 }
 
-.navegation {
-  width: 40%; /* Ajustei a largura para ocupar 100% do container */
-  margin-top: 20px; /* Adicionei um espaço superior */
-}
-
-.navegation li {
-  /* padding: 10px; */
+.links-pages {
+  padding-top: 20px;
   color: white;
-  font-weight: bold; /* Adicionei negrito para melhor legibilidade */
+  font-weight: bold;
+  /* Adicionei negrito para melhor legibilidade */
+}
+.links-pages ul li {
+  /* padding: 10px; */
+  position: relative;
+  color: white;
+  font-weight: bold;
+  padding-right: 25px; /* Adicionei negrito para melhor legibilidade */
 }
 
-.image-perfil {
-  height: 100%;
-  max-width: 100%;
+.figure-image {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.image img.is-rounded {
   border-radius: 100%;
-  object-fit: cover;
+  width: 85%;
+  height: 85%;
 }
 
 .logo-perfil {
@@ -109,8 +153,23 @@ export default {
   height: auto;
 }
 
-.text-perfil p {
-  padding-left: 5px;
+.text-info .title-profile {
   color: aliceblue;
+  font-size: 20px;
+  position: relative;
+  top: 5px;
+}
+.text-info .subtitle-profile {
+  color: aliceblue;
+  position: relative;
+  top: 6px;
+  font-size: small;
+  border-bottom: 1px solid #ffffff;
+}
+
+@media screen and (max-width: 768px) {
+  .logo-perfil img {
+    display: none;
+  }
 }
 </style>

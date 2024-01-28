@@ -1,6 +1,6 @@
 <template>
   <div class="music-playlist is-flex is-justify-content-center">
-    <div class="playlist-container is-flex is-justify-content-center p-4">
+    <div class="playlist-container is-flex is-justify-content-center">
       <ul class="playlist">
         <li v-for="(composition, index) in compositions" :key="index">
           <div
@@ -141,5 +141,17 @@ export default defineComponent({
 .playlist li path {
   fill: #000;
   cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .playlist-container {
+    border: 1px solid #f5f5f5;
+    opacity: 100%;
+    width: 90%;
+    border-radius: 5px;
+    height: 290px;
+    overflow-y: overlay;
+    margin-top: 20px;
+  }
 }
 </style>

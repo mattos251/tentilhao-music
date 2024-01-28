@@ -11,19 +11,23 @@
           role="button"
           class="navbar-burger"
           aria-label="menu"
-          aria-expanded="false"
+          aria-expanded="true"
           data-target="navbarBasicExample"
+          @click="toggleMenu"
         >
-          <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div
+        id="navbarBasicExample"
+        class="navbar-menu"
+        :class="{ 'is-active': isMenuActive }"
+      >
         <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="buttons">
+          <div class="navbar-item navbar-dropdown has-dropdown">
+            <div class="buttons navbar-dropdown">
               <a class="button is-light">
                 <router-link to="/homepage"> Home </router-link>
               </a>
@@ -44,6 +48,11 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "NavbarNavigation",
+  data() {
+    return {
+      isMenuActive: false,
+    };
+  },
   methods: {
     enviarMensagem() {
       const numeroTelefone = "89994758809";
@@ -59,6 +68,9 @@ export default defineComponent({
 
       // Recarrega a página
       location.reload();
+    },
+    toggleMenu() {
+      this.isMenuActive = !this.isMenuActive;
     },
   },
 });
@@ -77,6 +89,11 @@ export default defineComponent({
 .navbar-logo img {
   height: auto;
   max-width: 80%;
+}
+
+.navbar-dropdown {
+  flex-direction: row;
+  align-items: flex-start;
 }
 
 .navbar-menu {

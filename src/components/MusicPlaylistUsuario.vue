@@ -1,52 +1,4 @@
 <template>
-  <div class="modal" :class="{ 'is-active': showModalDelete }">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Modal title</p>
-        <button
-          class="delete"
-          aria-label="close"
-          @click="openModal('del')"
-        ></button>
-      </header>
-      <section class="modal-card-body">
-        Tem certeza que deseja remover esta música?
-      </section>
-      <footer class="modal-card-foot is-justify-content-flex-end">
-        <button class="button is-danger">Remover musica</button>
-        <button class="button" @click="openModal('del')">Cancelar</button>
-      </footer>
-    </div>
-  </div>
-
-  <cadastro-composicao
-    class="modal"
-    :class="{ 'is-active': showModalUpdate }"
-  /><!-- dar um geito de fechar o modal, põe um botão de fechar -->
-  <!-- <div class="modal" :class="{ 'is-active': showModalUpdate }">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Modal title</p>
-        <button
-          class="delete"
-          aria-label="close"
-          @click="openModal('put')"
-        ></button>
-      </header>
-      <section class="modal-card-body">
-        Tem certeza que deseja remover esta música?
-      </section>
-      <footer class="modal-card-foot is-justify-content-flex-end">
-        <button class="button is-success">Atualizar</button>
-        <button class="button is-danger" @click="openModal('put')">
-          Cancelar
-        </button>
-      </footer>
-    </div>
-  </div> -->
-
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
@@ -70,44 +22,79 @@
               <svg-icon
                 type="mdi"
                 :path="Delete"
-                @click="openModal('del')"
+                @click="openModal('del', composition.id)"
               ></svg-icon>
               <svg-icon
                 type="mdi"
                 :path="Editar"
-                @click="openModal('put')"
+                @click="showModalUpdateClick(composition)"
               ></svg-icon>
             </div>
           </div>
+          <ModalUpdateComposicao
+            class="modal"
+            v-if="showModalUpdate"
+            :compositionData="compositionToUpdate"
+            @fecharModal="fecharModalUpdate"
+          />
         </li>
       </ul>
+    </div>
+
+    <div class="modal" :class="{ 'is-active': showModalDelete }">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Modal title</p>
+          <button class="delete" aria-label="close" @click="openModal('del')"></button>
+        </header>
+        <section class="modal-card-body">
+          Tem certeza que deseja remover esta música?
+        </section>
+        <footer class="modal-card-foot is-justify-content-flex-end">
+          <button class="button is-danger" @click="removeMusic(compositionToDeleteId)">
+            Remover musica
+          </button>
+          <button class="button" @click="openModal('del')">Cancelar</button>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline } from "@mdi/js";
 import axios from "axios";
 import { mapActions } from "vuex";
-import CadastroComposicao from "@/views/CadastroComposicao.vue";
+import ModalUpdateComposicao from "./ModalUpdateComposicao.vue";
 
 export default defineComponent({
   name: "MusicPlaylistFeed",
-  components: { SvgIcon, CadastroComposicao },
+  components: { SvgIcon, ModalUpdateComposicao },
   data() {
     return {
+      key: 0,
       Play: mdiPlay,
       Delete: mdiDelete,
       Editar: mdiSquareEditOutline,
-      compositions: [],
-      isModalOpen: false,
+      compositions: [] as any[], // Defina o tipo apropriado para as composições
+      compositionToUpdate: null as any | null, // Defina o tipo apropriado para a composição a ser atualizada
       showModalDelete: false,
       showModalUpdate: false,
+      compositionToDeleteId: null as number | null,
     };
   },
+  watch: {
+    compositions(newCompositions) {
+      console.log("compositions foi atualizado:", newCompositions);
+      // Você pode adicionar ações adicionais aqui se necessário
+    },
+  },
   mounted() {
+    this.showModalUpdate = false;
+
     const token = localStorage.getItem("token");
     if (token) {
       const usuarioId = this.decodeToken(token);
@@ -116,14 +103,61 @@ export default defineComponent({
   },
 
   methods: {
-    openModal(modalType: string) {
-      modalType == "del"
-        ? (this.showModalDelete = !this.showModalDelete)
-        : (this.showModalUpdate = !this.showModalUpdate);
+    showModalUpdateClick(composition: any) {
+      this.compositionToUpdate = composition;
+      console.log("banana", this.compositionToUpdate);
+      this.showModalUpdate = true;
     },
+
+    fecharModalUpdate() {
+      // Fechar o modal de atualização
+      this.showModalUpdate = false;
+    },
+    openModal(modalType: string, compositionId: number) {
+      if (modalType === "del") {
+        this.showModalDelete = !this.showModalDelete;
+        this.compositionToDeleteId = compositionId;
+      } else if (modalType === "put") {
+        // Busque a composição a ser editada
+        this.compositionToUpdate = this.compositions.find(
+          (composition) => composition.id === compositionId
+        );
+        this.showModalUpdate = true;
+      }
+      // Adicione a lógica para outros tipos de modal, se necessário
+    },
+
+    async removeMusic(compositionId: number | null) {
+      try {
+        if (compositionId !== null) {
+          // Lógica para remover a música usando o ID
+          console.log("Removendo música com o ID:", compositionId);
+          const token = localStorage.getItem("token");
+
+          const response = await axios.delete(
+            `http://localhost:3333/api/deletar/Composicao/${compositionId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          window.location.reload();
+
+          this.openModal("del", compositionId);
+
+          // Incrementar a chave para forçar o remontagem do component
+
+          console.log("Música removida com sucesso!", response);
+        }
+      } catch (error) {
+        console.error("Erro ao remover a música:", error);
+      }
+    },
+
     ...mapActions("musicPlayer", ["selectComposition"]),
 
-    handlePlayClick(composition: never) {
+    handlePlayClick(composition: any) {
       this.selectComposition(composition); // Chame a ação para selecionar a composição
     },
 
@@ -172,13 +206,9 @@ export default defineComponent({
       }
     },
 
-    // openModal() {
-    //   this.isModalOpen = true;
-    //   console.log();
+    // closeModal() {
+    //   this.isModalOpen = false;
     // },
-    closeModal() {
-      this.isModalOpen = false;
-    },
   },
 });
 </script>
@@ -202,33 +232,35 @@ export default defineComponent({
   color: black;
 }
 
-.playlist li {
+/* .playlist li {
   margin-bottom: 20px;
   border-bottom: 1px solid #3636362b;
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
 .playlist li path {
   fill: #000;
   cursor: pointer;
 }
-/* .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} */
 
 .img_capa {
   display: flex;
   align-items: center;
   width: 25px;
   height: auto;
+}
+
+.playlist .icons {
+  cursor: pointer;
+}
+
+.playlist li {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3636362b;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>

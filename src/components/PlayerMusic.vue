@@ -5,6 +5,7 @@
         :src="`${currentComposition?.imagem_capa || profilee}`"
         alt="Album Cover"
         class="album-cover"
+        loading="lazy"
       />
 
       <div class="track-info">
@@ -153,6 +154,7 @@ export default {
       }
     },
     playComposition(this: PlayMusic, composition: any): void {
+      console.log("composition", composition);
       if (
         composition &&
         typeof composition.audio === "string" &&
@@ -322,5 +324,31 @@ interface PlayMusic {
 
 .vol-seek {
   margin-left: 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .player-footer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .music-player {
+    padding: 5px;
+  }
+
+  .controls,
+  .time {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .control-icon {
+    margin: 5px;
+  }
+
+  .album-cover {
+    margin-bottom: 10px;
+  }
 }
 </style>

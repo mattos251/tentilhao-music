@@ -1,8 +1,8 @@
 <template>
-  <div class="container are-cadastro">
+  <div class="container form">
     <div class="content">
-      <h1>Cadastre sua composição</h1>
-      <div class="form-page">
+      <h1>Atualize sua composição</h1>
+      <!-- <div class="form-page">
         <h6>Faça upload do áudio</h6>
         <div class="file">
           <label class="file-label">
@@ -22,10 +22,10 @@
             </span>
           </label>
         </div>
-      </div>
+      </div> -->
 
-      <div class="form-page">
-        <h6>upload da imagem</h6>
+      <!-- <div class="form-page">
+        <h6>Faça upload da imagem</h6>
         <div class="file">
           <label class="file-label">
             <input
@@ -44,15 +44,15 @@
             </span>
           </label>
         </div>
-      </div>
+      </div> -->
 
-      <div class="form-page">
+      <div class="is-flex is-justify-content-center m-2">
         <h6>Título da composição</h6>
         <input
           class="input"
-          v-model="compositionTitle"
           type="text"
           placeholder="Título"
+          v-model="localCompositionData.compositionData.titulo"
         />
       </div>
 
@@ -70,8 +70,8 @@
       <div>
         <textarea
           class="text-area"
-          v-model="compositionDescription"
           placeholder="e.g. Hello world"
+          v-model="localCompositionData.compositionData.texto"
         ></textarea>
         <label class="checkbox">
           <input v-model="agreeTerms" type="checkbox" />
@@ -87,13 +87,19 @@
         >
           Enviar
         </button>
+        <button
+          @click="fecharModal"
+          class="button is-fullwidth is-responsive button-cancel"
+        >
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import {
   getDownloadURL,
@@ -104,54 +110,66 @@ import axios from "axios";
 import { storage } from "../firebase";
 
 const selectedGenre = ref(1);
-const audioFile = ref<File | null>(null);
-const imageFile = ref<File | null>(null);
+// const audioFile = ref<File | null>(null);
+// const imageFile = ref<File | null>(null);
 const compositionTitle = ref("");
 const compositionDescription = ref("");
 const agreeTerms = ref(false);
 const usuaID = ref("");
 const genres = ref([]);
 
+const compositionData = defineProps(["compositionData"]);
+const localCompositionData = ref({ ...compositionData });
+
+console.log("localCompositionData", localCompositionData);
+
+onMounted(() => {
+  console.log("brawnie", localCompositionData.value.compositionData);
+  // Inicialize localCompositionData aqui se necessário
+});
+
 const router = useRouter();
 
-const handleAudioUpload = (event: { target: { files: File[] } }) => {
-  audioFile.value = event.target.files[0];
+const emit = defineEmits(["fecharModal"]);
+
+const fecharModal = () => {
+  // Emitir um evento chamado 'fecharModal' para indicar que o modal deve ser fechado
+  emit("fecharModal");
 };
 
-const handleImageUpload = (event: { target: { files: File[] } }) => {
-  imageFile.value = event.target.files[0];
-};
+// const handleAudioUpload = (event: { target: { files: File[] } }) => {
+//   audioFile.value = event.target.files[0];
+//   console.log("handleAudioUpload", handleAudioUpload);
+// };
+
+// const handleImageUpload = (event: { target: { files: File[] } }) => {
+//   imageFile.value = event.target.files[0];
+// };
 
 const isValidForm = computed(() => {
-  return (
-    audioFile.value !== null &&
-    imageFile.value !== null &&
-    compositionTitle.value.trim() !== "" &&
-    selectedGenre.value !== 1 &&
-    agreeTerms.value
-  );
+  const isValid =
+    (compositionTitle.value.trim() !== "" ||
+      (localCompositionData.value &&
+        localCompositionData.value.compositionData.titulo.trim() !== "")) &&
+    (selectedGenre.value !== 1 ||
+      (localCompositionData.value &&
+        localCompositionData.value.compositionData.genero_musical_id !== 1)) &&
+    agreeTerms.value;
+
+  return isValid;
 });
+
+console.log("isValidForm:", isValidForm);
 
 const submitComposition = async () => {
   try {
-    const audioStorageRef = storageRef(storage, `audio/${audioFile.value.name}`);
-    const imageStorageRef = storageRef(storage, `images/${imageFile.value.name}`);
-
-    const [audioUploadTask, imageUploadTask] = await Promise.all([
-      uploadBytesResumable(audioStorageRef, audioFile.value),
-      uploadBytesResumable(imageStorageRef, imageFile.value),
-    ]);
-
-    const [audioUrl, imageUrl] = await Promise.all([
-      getDownloadURL(audioStorageRef),
-      getDownloadURL(imageStorageRef),
-    ]);
-
     const token1 = localStorage.getItem("token");
 
     if (token1) {
       try {
+        // Decodifica o token (assumindo que seja um token JWT)
         const decodedToken = JSON.parse(atob(token1.split(".")[1]));
+
         usuaID.value = decodedToken.userId;
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
@@ -161,17 +179,25 @@ const submitComposition = async () => {
     }
 
     const compositionData = {
-      usuarioId: usuaID.value,
-      imagem_capa: imageUrl,
-      audio: audioUrl,
-      title: compositionTitle.value,
-      genero_musical_id: selectedGenre.value,
-      texto: compositionDescription.value,
+      usuario_id: localCompositionData.value.compositionData.usuario_id,
+      imagem_capa: localCompositionData.value.compositionData.imagem_capa,
+      audio: localCompositionData.value.compositionData.audio,
+      titulo: compositionTitle.value || localCompositionData.value.compositionData.titulo,
+      genero_musical_id:
+        selectedGenre.value ||
+        localCompositionData.value.compositionData.genero_musical_id,
+      texto:
+        compositionDescription.value || localCompositionData.value.compositionData.texto,
     };
 
+    console.log("compositionData", compositionData);
+
     const token = localStorage.getItem("token");
-    await axios.post(
-      "http://localhost:3333/api/cadastro/ComposicaoUser",
+    const compositionId = localCompositionData.value.compositionData.id; // Substitua "id" pelo nome correto do campo que armazena o ID da composição
+
+    // Fazendo um pedido PUT
+    await axios.put(
+      `http://localhost:3333/api/atualizar/Composicao/${compositionId}`,
       compositionData,
       {
         headers: {
@@ -181,7 +207,9 @@ const submitComposition = async () => {
       }
     );
 
-    router.push({ path: "/perfil" });
+    emit("fecharModal");
+
+    // router.push({ path: "/perfil" });
   } catch (error) {
     console.error("Erro durante o upload:", error.message);
   }
@@ -189,10 +217,8 @@ const submitComposition = async () => {
 
 onMounted(async () => {
   try {
-    const [genresResponse] = await Promise.all([
-      axios.get("http://localhost:3333/api/generos"),
-    ]);
-    genres.value = genresResponse.data;
+    const response = await axios.get("http://localhost:3333/api/generos");
+    genres.value = response.data;
   } catch (error: any) {
     console.error("Erro ao obter generos:", error.message);
   }
@@ -200,17 +226,16 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.are-cadastro {
+.form {
   display: flex;
   justify-content: center;
 }
 .content {
   margin-top: 10px;
   padding: 10px;
-  min-width: 40px;
-  background: #4296c4a3;
+  width: 50%;
+  background: #81c6eb;
   border-radius: 20px;
-  position: relative;
 }
 .content h1 {
   display: flex;
@@ -222,16 +247,10 @@ onMounted(async () => {
 }
 
 .form-page {
-  padding: 10px;
-  width: 100%;
   display: flex;
   justify-content: space-between;
-}
-
-.input,
-.textarea {
-  box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
-  width: 200px;
+  padding: 10px;
+  width: 100%;
 }
 
 .text-area {
@@ -259,38 +278,9 @@ select {
   width: 200px;
 }
 
-@media screen and (max-width: 768px) {
-  /* Apply styles for screens larger than 768px width */
-  .content {
-    margin-top: 10px;
-    padding: 10px;
-    width: 90%;
-    background: #4296c4a3;
-    border-radius: 20px;
-  }
-
-  .file {
-    align-items: stretch;
-    display: flex;
-    justify-content: center;
-    position: relative;
-  }
-
-  .input,
-  .textarea {
-    box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
-    max-width: 100%;
-    width: 200px;
-  }
-
-  .form-page[data-v-69fea94e] {
-    padding: 10px;
-    width: 100%;
-  }
-
-  .content h1 {
-    font-size: 21px;
-    margin-bottom: 0.5em;
-  }
+.button-cancel {
+  margin-top: 10px;
+  /* background: #003857; */
+  color: black;
 }
 </style>

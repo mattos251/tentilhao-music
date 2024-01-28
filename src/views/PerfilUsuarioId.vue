@@ -4,34 +4,32 @@
       <div class="column is-full">
         <div class="columns is-mobile header-perfil">
           <div class="columns is-centered">
-            <div class="column is-half-tablet is-one-third-desktop">
-              <div class="">
-                <div class="is-flex">
-                  <div class="midia-contant">
-                    <figure class="image is-96x96">
-                      <img
-                        class="image-perfil"
-                        src="../assets/perfil.jpg"
-                        alt="User Image"
-                      />
-                    </figure>
-                  </div>
-                  <div class="media-content is-align-self-center">
-                    <p class="title is-4">{{ usuario.nome_completo }}</p>
-                    <p class="subtitle is-6">
-                      {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
-                    </p>
-                  </div>
+            <div class="user-card column is-half-tablet is-one-third-desktop">
+              <div class="user-info is-flex">
+                <div>
+                  <figure class="image is-128x128 figure-image">
+                    <img
+                      class="profile-image is-rounded"
+                      :src="usuario.imagem_perfil"
+                      alt="User Image"
+                    />
+                  </figure>
                 </div>
-                <div class="navegation">
-                  <ul class="is-flex is-justify-content-space-around">
-                    <router-link to="/homepage">
-                      <li>Home</li>
-                    </router-link>
-                    <router-link to="/feeds">
-                      <li>Feed</li>
-                    </router-link>
-                  </ul>
+                <div class="text-info is-align-self-center">
+                  <p class="title-profile">{{ usuario.nome }}</p>
+                  <p class="subtitle-profile">
+                    {{ usuario.tipo_usuario ? "Compositor" : "Produtor" }}
+                  </p>
+                  <div class="links-pages">
+                    <ul class="is-flex">
+                      <router-link to="/homepage" class="nav-link">
+                        <li>Home</li>
+                      </router-link>
+                      <router-link to="/feeds" class="nav-link">
+                        <li>Feed</li>
+                      </router-link>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -67,7 +65,7 @@
           <div v-show="activeTab === 'music'">
             <!-- <MusicPlaylistUsuario /> -->
             <div class="music-playlist is-flex is-justify-content-center">
-              <div class="playlist-container is-flex is-justify-content-center p-4">
+              <div class="playlist-container is-flex is-justify-content-center">
                 <ul class="playlist">
                   <li v-for="(composition, index) in compositions" :key="index">
                     <div
@@ -325,5 +323,56 @@ export default defineComponent({
 .playlist li path {
   fill: #000;
   cursor: pointer;
+}
+
+.image img.is-rounded {
+  border-radius: 100%;
+  width: 85%;
+  height: 85%;
+}
+
+.logo-perfil {
+  width: 80%; /* Ajustei a largura do logo para 80% do contêiner */
+  height: auto;
+}
+
+.text-info .title-profile {
+  color: aliceblue;
+  font-size: 20px;
+  position: relative;
+  top: 5px;
+}
+.text-info .subtitle-profile {
+  color: aliceblue;
+  position: relative;
+  top: 6px;
+  font-size: small;
+  border-bottom: 1px solid #ffffff;
+}
+
+.links-pages {
+  padding-top: 20px;
+  color: white;
+  font-weight: bold;
+  /* Adicionei negrito para melhor legibilidade */
+}
+.links-pages ul li {
+  /* padding: 10px; */
+  position: relative;
+  color: white;
+  font-weight: bold;
+  padding-right: 25px; /* Adicionei negrito para melhor legibilidade */
+}
+
+.figure-image {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .logo-perfil img {
+    display: none;
+  }
 }
 </style>
