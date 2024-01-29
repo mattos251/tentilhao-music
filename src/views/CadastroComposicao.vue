@@ -171,7 +171,7 @@ const submitComposition = async () => {
 
     const token = localStorage.getItem("token");
     await axios.post(
-      "http://localhost:3333/api/cadastro/ComposicaoUser",
+      "https://tentilhao-backend.vercel.app/api/cadastro/ComposicaoUser",
       compositionData,
       {
         headers: {
@@ -190,7 +190,7 @@ const submitComposition = async () => {
 onMounted(async () => {
   try {
     const [genresResponse] = await Promise.all([
-      axios.get("http://localhost:3333/api/generos"),
+      axios.get("https://tentilhao-backend.vercel.app/api/generos"),
     ]);
     genres.value = genresResponse.data;
   } catch (error: any) {

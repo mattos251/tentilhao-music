@@ -74,10 +74,13 @@ export default defineComponent({
 
     const EnvioLogin = async () => {
       try {
-        const response = await axios.post("http://localhost:3333/api/login", {
-          email: email.value,
-          password: password.value,
-        });
+        const response = await axios.post(
+          "https://tentilhao-backend.vercel.app/api/login",
+          {
+            email: email.value,
+            password: password.value,
+          }
+        );
 
         if (response.data.token) {
           const token = response.data.token;

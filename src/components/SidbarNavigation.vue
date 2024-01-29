@@ -63,7 +63,7 @@ export default defineComponent({
         const UserId = this.usuario.userId;
         try {
           const response = await axios.get(
-            `http://localhost:3333/api/usuarios/${UserId}`,
+            `https://tentilhao-backend.vercel.app/api/usuarios/${UserId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

@@ -128,7 +128,9 @@ export default defineComponent({
 
   async mounted() {
     try {
-      const response = await axios.get("http://localhost:3333/api/generos");
+      const response = await axios.get(
+        "https://tentilhao-backend.vercel.app/api/generos"
+      );
       this.genres = response.data;
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
@@ -149,13 +151,16 @@ export default defineComponent({
           imagem_perfil: null,
         };
 
-        const response = await fetch("http://localhost:3333/api/usuarios/cadastro", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
+        const response = await fetch(
+          "https://tentilhao-backend.vercel.app/api/usuarios/cadastro",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          }
+        );
 
         const responseData = await response.json();
 

@@ -135,7 +135,7 @@ export default defineComponent({
           const token = localStorage.getItem("token");
 
           const response = await axios.delete(
-            `http://localhost:3333/api/deletar/Composicao/${compositionId}`,
+            `https://tentilhao-backend.vercel.app/api/deletar/Composicao/${compositionId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -177,7 +177,7 @@ export default defineComponent({
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:3333/api/composicoesUser/${userId}`,
+          `https://tentilhao-backend.vercel.app/api/composicoesUser/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -187,7 +187,7 @@ export default defineComponent({
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+            `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

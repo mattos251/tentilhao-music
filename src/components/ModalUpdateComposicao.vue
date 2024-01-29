@@ -197,7 +197,7 @@ const submitComposition = async () => {
 
     // Fazendo um pedido PUT
     await axios.put(
-      `http://localhost:3333/api/atualizar/Composicao/${compositionId}`,
+      `https://tentilhao-backend.vercel.app/api/atualizar/Composicao/${compositionId}`,
       compositionData,
       {
         headers: {

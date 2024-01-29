@@ -61,7 +61,7 @@ export default {
 
       try {
         const response = await axios.get(
-          `http://localhost:3333/api/usuarios/${usuario.value.userId}`,
+          `https://tentilhao-backend.vercel.app/api/usuarios/${usuario.value.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

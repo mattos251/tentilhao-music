@@ -77,11 +77,14 @@ export default defineComponent({
   async mounted() {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:3333/api/composicoes", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        "https://tentilhao-backend.vercel.app/api/composicoes",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       // Filtrar composições com base no gênero selecionado
       const filteredCompositions = response.data.filter(

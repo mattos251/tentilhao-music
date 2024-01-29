@@ -164,11 +164,14 @@ export default defineComponent({
 
     const userId = this.$route.params.userId;
 
-    const response = await axios.get(`http://localhost:3333/api/usuarios/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `https://tentilhao-backend.vercel.app/api/usuarios/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     this.usuario = response.data.usuario;
     this.numero_telefone = this.usuario.numero_telefone;
@@ -201,7 +204,7 @@ export default defineComponent({
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:3333/api/composicoesUser/${userId}`,
+          `https://tentilhao-backend.vercel.app/api/composicoesUser/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -211,7 +214,7 @@ export default defineComponent({
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+            `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
