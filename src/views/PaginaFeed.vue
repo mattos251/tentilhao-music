@@ -12,9 +12,9 @@
         </div>
       </div>
 
-      <div class="is-flex is-justify-content-center m-2">
+      <!-- <div class="is-flex is-justify-content-center m-2">
         <input class="input input-search" type="text" placeholder="Loading input" />
-      </div>
+      </div> -->
 
       <section>
         <MusicPlaylistFeed :filteredSongs="filteredSongs" />
