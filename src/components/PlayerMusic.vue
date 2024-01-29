@@ -66,9 +66,9 @@
           :path="voluAlto"
           @click="toggleVolumeControl"
         ></svg-icon>
+        <!-- v-if="showVolume" -->
         <input
           type="range"
-          v-if="showVolumeControl"
           class="vol-seek"
           id="vol-seek"
           min="0"
@@ -147,7 +147,7 @@ export default {
       } as Volume,
       duration: "0:00",
       currentTime: "0:00",
-      showVolumeControl: false,
+      // showVolume: false,
     };
   },
 
@@ -191,13 +191,13 @@ export default {
       this.$store.commit("setIsPlaying", false);
     },
 
-    toggleVolumeControl() {
-      this.showVolumeControl = !this.showVolumeControl;
-    },
+    // toggleVolumeControl() {
+    //   this.showVolume = !this.showVolume;
+    // },
 
-    handleResize() {
-      this.showVolumeControl = window.innerWidth > 780;
-    },
+    // handleResize() {
+    //   this.showVolume = window.innerWidth > 780;
+    // },
 
     handleSeek(this: PlayMusic): void {
       this.music.element.currentTime = this.seekbar.value;
@@ -238,7 +238,7 @@ export default {
   mounted(this: PlayMusic): void {
     this.$watch(
       () => this.$store.getters["musicPlayer/getSelectedComposition"],
-      (newComposition) => {
+      (newComposition: any) => {
         if (newComposition) {
           // Se houver uma nova composição, reproduza-a
           this.playComposition(newComposition);
@@ -269,8 +269,8 @@ export default {
       this.handleNext();
     });
 
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
+    // window.addEventListener("resize", this.handleResize);
+    // this.handleResize();
     // this.music.element.addEventListener("pause", () => {
     //   // Atualiza o estado isPlaying para false após a pausa
     //   this.$store.commit("setIsPlaying", true);
