@@ -18,24 +18,24 @@
       </div>
 
       <div class="controls">
-        <svg-icon
+        <!-- <svg-icon
           class="control-icon"
           type="mdi"
           :path="Left"
           @click="handlePrevious"
-        ></svg-icon>
+        ></svg-icon> -->
         <svg-icon
           class="control-icon"
           type="mdi"
           :path="isPlaying ? Pausa : Play"
           @click="handlePlayPause"
         ></svg-icon>
-        <svg-icon
+        <!-- <svg-icon
           class="control-icon"
           type="mdi"
           :path="Right"
           @click="handleNext"
-        ></svg-icon>
+        ></svg-icon> -->
       </div>
 
       <div class="time">
@@ -60,9 +60,15 @@
       </div>
 
       <div class="controls">
-        <svg-icon class="control-icon" type="mdi" :path="voluAlto"></svg-icon>
+        <svg-icon
+          class="control-icon"
+          type="mdi"
+          :path="voluAlto"
+          @click="toggleVolumeControl"
+        ></svg-icon>
         <input
           type="range"
+          v-if="showVolumeControl"
           class="vol-seek"
           id="vol-seek"
           min="0"
@@ -129,7 +135,7 @@ export default {
       Pausa: mdiPauseBoxOutline,
       profilee: require("@/assets/OIP.jpg"),
       music: {
-        paused: true,
+        paused: false,
         element: new Audio(),
       } as Music,
       seekbar: {
@@ -141,8 +147,10 @@ export default {
       } as Volume,
       duration: "0:00",
       currentTime: "0:00",
+      showVolumeControl: false,
     };
   },
+
   methods: {
     handlePlayPause(this: PlayMusic): void {
       console.log("isPlaying:", this.isPlaying);
@@ -160,15 +168,17 @@ export default {
         typeof composition.audio === "string" &&
         composition.audio.trim() !== ""
       ) {
-        this.music.element.src = composition.audio;
+        console.log(composition);
 
-        // Pausa a música se estiver tocando
-        this.pauseComposition();
+        this.music.element.src = composition.audio;
 
         // Atualiza o estado isPlaying para true antes de tocar
         this.$store.commit("setIsPlaying", true);
 
+        // Inicia a reprodução imediatamente após carregar a nova música
         this.music.element.play();
+
+        // Se necessário, você pode adicionar lógica para selecionar a nova composição
         this["musicPlayer/selectComposition"](composition);
       } else {
         console.error('Composição inválida ou sem propriedade "audio".');
@@ -180,6 +190,15 @@ export default {
       this.music.element.pause();
       this.$store.commit("setIsPlaying", false);
     },
+
+    toggleVolumeControl() {
+      this.showVolumeControl = !this.showVolumeControl;
+    },
+
+    handleResize() {
+      this.showVolumeControl = window.innerWidth > 780;
+    },
+
     handleSeek(this: PlayMusic): void {
       this.music.element.currentTime = this.seekbar.value;
     },
@@ -217,7 +236,21 @@ export default {
     },
   },
   mounted(this: PlayMusic): void {
+    this.$watch(
+      () => this.$store.getters["musicPlayer/getSelectedComposition"],
+      (newComposition) => {
+        if (newComposition) {
+          // Se houver uma nova composição, reproduza-a
+          this.playComposition(newComposition);
+        }
+      }
+    );
+
+    // Inicie a reprodução com a composição atual
+    this.playComposition(this.currentComposition);
+
     this.music.element.addEventListener("error", (event) => {
+      this.playComposition(this.currentComposition);
       console.error("Erro no elemento de áudio:", event);
     });
 
@@ -235,6 +268,9 @@ export default {
       // Adicione a lógica para reproduzir a próxima faixa automaticamente
       this.handleNext();
     });
+
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
     // this.music.element.addEventListener("pause", () => {
     //   // Atualiza o estado isPlaying para false após a pausa
     //   this.$store.commit("setIsPlaying", true);
@@ -333,22 +369,18 @@ interface PlayMusic {
   }
 
   .music-player {
-    padding: 5px;
+    padding: 10px;
   }
-
-  .controls,
   .time {
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10px;
+    display: none;
   }
 
   .control-icon {
     margin: 5px;
   }
 
-  .album-cover {
+  /* .album-cover {
     margin-bottom: 10px;
-  }
+  } */
 }
 </style>

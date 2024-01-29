@@ -4,12 +4,12 @@
       <div class="area-navegacao">
         <div class="perfil-usuario">
           <router-link to="/perfil">
-            <!-- Ajuste o tamanho conforme necessário -->
             <figure class="image is-128x128">
               <img
                 class="is-fullwidth"
                 :src="usuario.imagem_perfil"
                 alt="Imagem do Perfil"
+                loading="lazy"
               />
             </figure>
 
@@ -39,76 +39,63 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup>
 import axios from "axios";
-import { defineComponent } from "vue";
+import { ref, onMounted } from "vue";
 
-export default defineComponent({
-  name: "SidbarNavigation",
+const usuario = ref({
+  nome: "",
+  imagem_perfil: "",
+  userId: "",
+});
 
-  data() {
-    return {
-      usuario: {
-        nome: "",
-        imagem_perfil: "",
-        userId: "",
-      },
-    };
-  },
-  methods: {
-    async fetchUserData() {
-      const token = localStorage.getItem("token");
+const fetchUserData = async () => {
+  const token = localStorage.getItem("token");
 
-      if (token) {
-        const UserId = this.usuario.userId;
-        try {
-          const response = await axios.get(
-            `https://tentilhao-backend.vercel.app/api/usuarios/${UserId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const userData = response.data;
-
-          this.usuario.nome = userData.usuario.nome_completo;
-          this.usuario.imagem_perfil = userData.usuario.imagem_perfil;
-        } catch (error) {
-          console.error("Erro ao obter dados do usuário:", error);
+  if (token) {
+    const UserId = usuario.value.userId;
+    try {
+      const response = await axios.get(
+        `https://tentilhao-backend.vercel.app/api/usuarios/${UserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } else {
-        console.log("Nenhum token encontrado no localStorage");
-      }
-    },
-    logout() {
-      // Remove o token do localStorage
-      localStorage.removeItem("token"); // Substitua 'seuToken' pelo nome real do seu token
+      );
 
-      // Recarrega a página
-      location.reload();
-    },
-  },
+      const userData = response.data;
 
-  mounted() {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      try {
-        // Decodifica o token (assumindo que seja um token JWT)
-        const decodedToken = JSON.parse(atob(token.split(".")[1]));
-
-        // Agora você pode acessar as informações do usuário
-        this.usuario.nome = decodedToken.nome_completo;
-        this.usuario.imagem_perfil = decodedToken.imagem_perfil;
-      } catch (error) {
-        console.error("Erro ao decodificar o token:", error);
-      }
-    } else {
-      console.log("Nenhum token encontrado no localStorage");
+      usuario.value.nome = userData.usuario.nome_completo;
+      usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
+    } catch (error) {
+      console.error("Erro ao obter dados do usuário:", error);
     }
-  },
+  } else {
+    console.log("Nenhum token encontrado no localStorage");
+  }
+};
+
+const logout = () => {
+  localStorage.removeItem("token");
+  location.reload();
+};
+
+onMounted(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+      usuario.value.nome = decodedToken.nome_completo;
+      usuario.value.imagem_perfil = decodedToken.imagem_perfil;
+    } catch (error) {
+      console.error("Erro ao decodificar o token:", error);
+    }
+  } else {
+    console.log("Nenhum token encontrado no localStorage");
+  }
 });
 </script>
 
