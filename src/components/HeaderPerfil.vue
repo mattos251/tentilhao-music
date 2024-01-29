@@ -43,74 +43,66 @@
 
 <script lang="ts">
 import axios from "axios";
+import { ref, onMounted } from "vue";
 
 export default {
   name: "HeaderPerfil",
 
-  data() {
-    return {
-      usuario: {
-        nome: "",
-        tipo_usuario: "",
-        imagem_perfil: "",
-        userId: "",
-      },
-    };
-  },
+  setup() {
+    const usuario = ref({
+      nome: "",
+      tipo_usuario: "",
+      imagem_perfil: "",
+      userId: "",
+    });
 
-  methods: {
-    async fetchUserData() {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3333/api/usuarios/${usuario.value.userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const userData = response.data;
+
+        usuario.value.nome = userData.usuario.nome_completo;
+        usuario.value.tipo_usuario = userData.usuario.tipo_usuario_id;
+        usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
+      } catch (error) {
+        console.error("Erro ao obter dados do usuário:", error);
+      }
+    };
+
+    onMounted(() => {
       const token = localStorage.getItem("token");
 
       if (token) {
-        const UserId = this.usuario.userId;
         try {
-          const response = await axios.get(
-            `http://localhost:3333/api/usuarios/${UserId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const userData = response.data;
-
-          this.usuario.nome = userData.usuario.nome_completo;
-          this.usuario.tipo_usuario = userData.usuario.tipo_usuario_id;
-          this.usuario.imagem_perfil = userData.usuario.imagem_perfil;
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          usuario.value.userId = decodedToken.userId;
         } catch (error) {
-          console.error("Erro ao obter dados do usuário:", error);
+          console.error("Erro ao decodificar o token:", error);
         }
       } else {
         console.log("Nenhum token encontrado no localStorage");
       }
-    },
-  },
 
-  mounted() {
-    const token = localStorage.getItem("token");
+      fetchUserData();
 
-    if (token) {
-      try {
-        // Decodifica o token (assumindo que seja um token JWT)
-        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      setInterval(() => {
+        fetchUserData();
+      }, 300000);
+    });
 
-        // Agora você pode acessar as informações do usuário
-        this.usuario.userId = decodedToken.userId;
-      } catch (error) {
-        console.error("Erro ao decodificar o token:", error);
-      }
-    } else {
-      console.log("Nenhum token encontrado no localStorage");
-    }
-
-    this.fetchUserData(); // Chama a função ao montar o componente
-
-    // Configura um intervalo de 5 minutos (300000 milissegundos) para buscar dados regularmente
-    setInterval(() => {
-      this.fetchUserData();
-    }, 300000); // ajuste conforme necessário
+    return {
+      usuario,
+    };
   },
 };
 </script>

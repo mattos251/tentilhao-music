@@ -71,8 +71,8 @@ export default defineComponent({
 .card-box {
   border: 1px solid #0093ff42;
   border-radius: 18px;
-  margin: 2px;
-  width: 20px;
+  margin: 20px;
+  width: 20%;
   height: auto;
 }
 
