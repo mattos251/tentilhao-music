@@ -94,7 +94,7 @@ export default defineComponent({
       // Iterar sobre as composições filtradas para buscar o nome do usuário
       for (const composition of filteredCompositions) {
         const userResponse = await axios.get(
-          `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+          `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

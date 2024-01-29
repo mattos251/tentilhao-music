@@ -81,6 +81,7 @@
 
       <div class="is-flex is-justify-content-center">
         <button
+          v-if="!loading"
           @click="submitComposition"
           class="button is-fullwidth is-responsive envio-formulario"
           :disabled="!isValidForm"
@@ -88,6 +89,8 @@
           Enviar
         </button>
       </div>
+
+      <a v-if="loading" class="button is-loading">Loading</a>
     </div>
   </div>
 </template>
@@ -111,6 +114,7 @@ const compositionDescription = ref("");
 const agreeTerms = ref(false);
 const usuaID = ref("");
 const genres = ref([]);
+const loading = ref(false);
 
 const router = useRouter();
 
@@ -134,6 +138,8 @@ const isValidForm = computed(() => {
 
 const submitComposition = async () => {
   try {
+    loading.value = true;
+
     const audioStorageRef = storageRef(storage, `audio/${audioFile.value.name}`);
     const imageStorageRef = storageRef(storage, `images/${imageFile.value.name}`);
 
@@ -181,6 +187,7 @@ const submitComposition = async () => {
       }
     );
 
+    loading.value = false;
     router.push({ path: "/perfil" });
   } catch (error) {
     console.error("Erro durante o upload:", error.message);
@@ -200,18 +207,30 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.button.is-loading {
+  width: 100%;
+  color: #ededed00 !important;
+  pointer-events: none;
+  background: #00223e;
+}
 .are-cadastro {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
+
 .content {
   margin-top: 10px;
   padding: 10px;
   min-width: 40px;
   background: #4296c4a3;
-  border-radius: 20px;
+  border-radius: 5px;
   position: relative;
+  width: 100%;
+  max-width: 400px;
 }
+
 .content h1 {
   display: flex;
   justify-content: center;
@@ -261,12 +280,18 @@ select {
 
 @media screen and (max-width: 768px) {
   /* Apply styles for screens larger than 768px width */
+  .are-cadastro {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Adiciona alinhamento vertical no centro */
+    /* Garante que o contêiner ocupe 100% da altura da tela */
+  }
+
   .content {
-    margin-top: 10px;
     padding: 10px;
     width: 90%;
     background: #4296c4a3;
-    border-radius: 20px;
+    border-radius: 5px;
   }
 
   .file {
