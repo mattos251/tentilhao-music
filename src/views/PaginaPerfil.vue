@@ -30,7 +30,7 @@
                   class="midia-contant is-flex is-justify-content-space-between is-align-items-center"
                 >
                   <figure class="image-profile is-96x96">
-                    <img src="../assets/perfil.jpg" alt="User Image" />
+                    <img src="../assets/OIP.jpg" alt="User Image" />
                   </figure>
 
                   <div class="file is-info">

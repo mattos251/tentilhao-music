@@ -178,5 +178,14 @@ export default defineComponent({
     width: 80%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   }
+
+  .box-register {
+    background-color: rgb(255 255 255 / 6%);
+    padding: 20px;
+    position: fixed;
+    border-radius: 8px;
+    width: 75%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
 }
 </style>

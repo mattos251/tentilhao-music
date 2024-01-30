@@ -189,7 +189,7 @@ export default defineComponent({
 
 <style scoped>
 .background-register {
-  background-color: #04314afd;
+  background: url("../assets/back-capa.png");
   position: fixed;
   top: 0;
   left: 0;
@@ -201,7 +201,7 @@ export default defineComponent({
 }
 
 .box-register {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgb(255 255 255 / 6%);
   padding: 20px;
   position: absolute;
   border-radius: 8px;
