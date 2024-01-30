@@ -103,14 +103,14 @@
                   </textarea>
                 </div>
 
-                <div class="alternative-option mt-4">
+                <!-- <div class="alternative-option mt-4">
                   <div>
                     <label class="checkbox">
                       <input type="checkbox" v-model="agreeTerms" />
                       I agree to the <a href="#">terms and conditions</a>
                     </label>
                   </div>
-                </div>
+                </div> -->
 
                 <button
                   :disabled="loading"
