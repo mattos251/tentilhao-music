@@ -60,6 +60,9 @@
         <h6>Gênero musical</h6>
         <div class="select">
           <select v-model="selectedGenre">
+            <option value="" disabled>Selecione um gênero</option>
+
+            <!-- Opções dinâmicas baseadas no loop -->
             <option v-for="genre in genres" :key="genre.id" :value="genre.id">
               {{ genre.genero }}
             </option>
@@ -71,12 +74,12 @@
         <textarea
           class="text-area"
           v-model="compositionDescription"
-          placeholder="e.g. Hello world"
+          placeholder="Texto da musica"
         ></textarea>
-        <label class="checkbox">
-          <input v-model="agreeTerms" type="checkbox" />
-          Concordo com os <a href="#">termos e condições</a>
-        </label>
+        <!-- <label class="checkbox">
+        <input v-model="agreeTerms" type="checkbox" />
+        Concordo com os <a href="#">termos e condições</a>
+      </label> -->
       </div>
 
       <div class="is-flex is-justify-content-center">
@@ -106,12 +109,12 @@ import {
 import axios from "axios";
 import { storage } from "../firebase";
 
-const selectedGenre = ref(1);
+const selectedGenre = ref();
 const audioFile = ref<File | null>(null);
 const imageFile = ref<File | null>(null);
 const compositionTitle = ref("");
 const compositionDescription = ref("");
-const agreeTerms = ref(false);
+// const agreeTerms = ref(false);
 const usuaID = ref("");
 const genres = ref([]);
 const loading = ref(false);
@@ -127,12 +130,13 @@ const handleImageUpload = (event: { target: { files: File[] } }) => {
 };
 
 const isValidForm = computed(() => {
+  console.log("Selected genre", selectedGenre.value);
   return (
     audioFile.value !== null &&
     imageFile.value !== null &&
     compositionTitle.value.trim() !== "" &&
-    selectedGenre.value !== 1 &&
-    agreeTerms.value
+    selectedGenre.value !== "" &&
+    selectedGenre.value !== undefined
   );
 });
 
@@ -223,12 +227,12 @@ onMounted(async () => {
 
 .content {
   margin-top: 40px;
-  padding: 10px;
+  padding: 32px;
   min-width: 40px;
   background: #049bf03d;
   position: relative;
   width: 100%;
-  height: 75vh;
+  height: 600px;
   max-width: 570px;
   backdrop-filter: blur(4px);
   border-radius: 18px;
@@ -269,6 +273,10 @@ onMounted(async () => {
   margin-top: 10px;
   background: #036faa;
   color: white;
+}
+.content-align {
+  display: flex;
+  align-items: center;
 }
 
 .file-cta {

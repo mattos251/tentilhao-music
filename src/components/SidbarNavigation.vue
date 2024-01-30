@@ -7,7 +7,7 @@
             <figure class="image is-128x128">
               <img
                 class="is-fullwidth"
-                :src="usuario.imagem_perfil"
+                :src="usuario.imagem_perfil || '../assets/OIP.jpg'"
                 alt="Imagem do Perfil"
                 loading="lazy"
               />

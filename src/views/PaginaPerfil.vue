@@ -34,7 +34,7 @@
                   </figure>
 
                   <div class="file is-info">
-                    <label class="file-label">
+                    <label class="file-label" v-if="!loading">
                       <input
                         class="file-input"
                         type="file"
@@ -46,10 +46,11 @@
                           <i class="fas fa-upload"></i>
                         </span>
                         <span class="file-label">
-                          {{ imageFile ? imageFile.name : "Upload imagem" }}</span
-                        >
+                          {{ imageFile ? imageFile.name : "Upload imagem" }}
+                        </span>
                       </span>
                     </label>
+                    <a v-if="loading" class="button is-loading">Loading</a>
                   </div>
                 </div>
 
@@ -95,14 +96,10 @@
                 </div>
 
                 <div class="control">
-                  <textarea class="textarea" placeholder="Disabled textarea">
-
-                  É um fato conhecido de todos que um leitor se distrairá com o conteúdo de
-                  texto legível de uma página quando estiver examinando sua diagramação. A
-                  vantagem de usar Lorem Ipsum é que ele tem uma distribuição normal de
-                  letras, ao contrário de "Conteúdo aqui, conteúdo aqui", fazendo com que
-                  ele ten
-
+                  <textarea
+                    class="textarea"
+                    placeholder="Fale um pouco sobre você e seu trabalho."
+                  >
                   </textarea>
                 </div>
 
@@ -116,13 +113,13 @@
                 </div>
 
                 <button
-                  v-if="!successMessage"
+                  :disabled="loading"
                   type="submit"
                   class="button is-fullwidth-mobile cadastro-button"
                   id="registration_button"
                   @click="registerUser"
                 >
-                  Cadastrar
+                  Atualizar
                 </button>
               </form>
             </div>
@@ -192,19 +189,9 @@ export default defineComponent({
       successMessage: "",
       imageUrl: ref<string | null>(null),
       imageFile: ref<File | null>(null),
+      loading: false,
     };
   },
-
-  // computed: {
-  //   isValidForm() {
-  //     return (
-  //       this.name !== null &&
-  //       this.imageFile !== null &&
-  //       this.selectedGenre !== "" &&
-  //       this.agreeTerms
-  //     );
-  //   },
-  // },
 
   async mounted() {
     try {
@@ -246,11 +233,14 @@ export default defineComponent({
     },
 
     async handleImageUpload(event: { target: { files: File[] } }) {
+      this.loading = true;
+
       const file = event.target.files[0];
 
       if (file) {
         try {
           const imageStorageRef = storageRef(storage, `images/${file.name}`);
+
           await uploadBytesResumable(imageStorageRef, file);
 
           // Após o upload bem-sucedido, obtenha a URL da imagem
@@ -258,6 +248,8 @@ export default defineComponent({
 
           // Agora, você pode armazenar a URL da imagem na variável imageUrl
           this.imageUrl = imageUrl;
+
+          this.loading = false;
           // Armazene também o arquivo, se necessário para o envio ao servidor
           this.imageFile = file;
         } catch (error) {
@@ -413,5 +405,9 @@ export default defineComponent({
   border-left: 0;
   border-right: 0;
   /* border-radius: 2px; */
+}
+
+.textarea {
+  color: black !important;
 }
 </style>
