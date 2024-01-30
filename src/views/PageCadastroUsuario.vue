@@ -3,7 +3,7 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-logo">
         <div>
-          <img src="../assets/TENTILHO.png" width="180" height="60" />
+          <img src="../assets/TENTILHO-nav.png" width="180" height="60" />
         </div>
         <a
           role="button"
@@ -22,12 +22,12 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <router-link 
+              <router-link
                 v-if="showLoginButton"
                 :to="{ path: '/Login' }"
-                class="button is-light"
+                class="button-login"
               >
-                  Login
+                Login
               </router-link>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default defineComponent({
 
 <style scoped>
 .navbar {
-  background: #519bc4;
+  background: #fff;
   height: 50px;
 }
 .navbar-logo {
@@ -83,10 +83,21 @@ export default defineComponent({
 }
 .navbar-logo img {
   height: auto;
-  max-width: 80%;
+  max-width: 70%;
 }
 
 .navbar-menu {
   margin-right: 20px;
+}
+
+.button-login {
+  border-bottom: 1px solid #4f9ac4;
+  color: #4f9ac4;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  height: 100%;
+  padding-bottom: 5px;
 }
 </style>

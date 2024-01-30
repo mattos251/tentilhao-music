@@ -216,19 +216,23 @@ onMounted(async () => {
 .are-cadastro {
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
   height: 100vh;
+  background: url("../assets/back-capa.png");
 }
 
 .content {
-  margin-top: 10px;
+  margin-top: 40px;
   padding: 10px;
   min-width: 40px;
-  background: #4296c4a3;
-  border-radius: 5px;
+  background: #049bf03d;
   position: relative;
   width: 100%;
-  max-width: 400px;
+  height: 75vh;
+  max-width: 570px;
+  backdrop-filter: blur(4px);
+  border-radius: 18px;
+  /* filter: blur(4px); */
 }
 
 .content h1 {
@@ -241,7 +245,7 @@ onMounted(async () => {
 }
 
 .form-page {
-  padding: 10px;
+  padding: 20px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -263,7 +267,7 @@ onMounted(async () => {
 }
 .envio-formulario {
   margin-top: 10px;
-  background: #003857;
+  background: #036faa;
   color: white;
 }
 
@@ -290,7 +294,7 @@ select {
   .content {
     padding: 10px;
     width: 90%;
-    background: #4296c4a3;
+    background: #049bf03d;
     border-radius: 5px;
   }
 
@@ -308,7 +312,7 @@ select {
     width: 200px;
   }
 
-  .form-page[data-v-69fea94e] {
+  .form-page {
     padding: 10px;
     width: 100%;
   }

@@ -29,3 +29,18 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.column {
+  height: 100% !important;
+  display: block;
+  flex-basis: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding-right: 0.4rem !important;
+}
+
+.columns .page {
+  height: 100vh !important;
+}
+</style>

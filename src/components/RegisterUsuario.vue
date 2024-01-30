@@ -204,7 +204,6 @@ export default defineComponent({
   background-color: rgba(255, 255, 255, 0.1);
   padding: 20px;
   position: absolute;
-  top: 50px;
   border-radius: 8px;
   min-width: 30%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra suave */

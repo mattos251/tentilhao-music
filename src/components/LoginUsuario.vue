@@ -114,7 +114,7 @@ export default defineComponent({
 
 <style scoped>
 .background-register {
-  background-color: #04314afd;
+  background: url("../assets/back-capa.png");
   position: fixed;
   top: 0;
   left: 0;

@@ -4,7 +4,11 @@
       <div class="navbar-logo">
         <div>
           <router-link to="/homepage">
-            <img src="../assets/TENTILHO.png" width="180" height="60" />
+            <img
+              src="../assets/TENTILHO Logo - Original with Transparent Background - 5000x5000 (2).png"
+            />
+            <!-- width="180"
+              height="50" -->
           </router-link>
         </div>
         <a
@@ -78,7 +82,8 @@ export default defineComponent({
 
 <style scoped>
 .navbar {
-  background: #519bc4;
+  /* background: #519bc4; */
+  background: #013a59;
   height: 50px;
 }
 .navbar-logo {
@@ -88,7 +93,7 @@ export default defineComponent({
 }
 .navbar-logo img {
   height: auto;
-  max-width: 80%;
+  width: 130px;
 }
 
 .navbar-dropdown {
