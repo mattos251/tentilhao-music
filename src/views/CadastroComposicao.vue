@@ -293,9 +293,12 @@ select {
 
   .content {
     padding: 10px;
+    top: 0;
     width: 90%;
+    position: absolute;
     background: #049bf03d;
     border-radius: 5px;
+    height: auto;
   }
 
   .file {

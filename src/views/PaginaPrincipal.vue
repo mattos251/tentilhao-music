@@ -31,7 +31,7 @@ export default {
 </script>
 
 <style scoped>
-.column {
+/* .column {
   height: 100% !important;
   display: block;
   flex-basis: 0;
@@ -39,7 +39,7 @@ export default {
   flex-shrink: 1;
   padding-right: 0.4rem !important;
 }
-
+*/
 .columns .page {
   height: 100vh !important;
 }

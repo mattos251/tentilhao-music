@@ -377,5 +377,15 @@ export default defineComponent({
   .logo-perfil img {
     display: none;
   }
+
+  .playlist-container {
+    border: 1px solid #f5f5f5;
+    opacity: 100%;
+    width: 100%;
+    border-radius: 5px;
+    height: 290px;
+    overflow-y: overlay;
+    margin-top: 20px;
+  }
 }
 </style>
