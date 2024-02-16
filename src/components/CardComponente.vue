@@ -10,7 +10,7 @@
           <div class="image is-1by1">
             <img :src="card.imagem_genero" alt="Card Image" />
           </div>
-          <h2>{{ card.genero }}</h2>
+          <h2 class="title-genres">{{ card.genero }}</h2>
         </div>
       </div>
     </div>
@@ -99,12 +99,24 @@ export default defineComponent({
     flex: none;
     width: 30%;
   }
-  .title-generos {
+  .title-genres {
     display: flex;
-    text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
     color: #519bc4;
+    justify-content: center;
+    font-size: x-large;
     margin-bottom: 30px;
+  }
+  .card-box {
+    border: 1px solid #0093ff42;
+    border-radius: 18px;
+    margin: 6px;
+    width: 20%;
+    height: auto;
+  }
+
+  .card-area {
+    width: auto;
   }
 }
 </style>

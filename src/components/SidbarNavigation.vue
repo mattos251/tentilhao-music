@@ -7,7 +7,7 @@
             <figure class="image is-128x128">
               <img
                 class="is-fullwidth"
-                :src="imagem_perfil ? imagem_perfil : imagem_padrao"
+                :src="usuario.imagem_perfil ? usuario.imagem_perfil : imagem_padrao"
                 alt="Imagem do Perfil"
                 loading="lazy"
               />
@@ -57,23 +57,48 @@ const logout = () => {
   location.reload();
 };
 
-onMounted(() => {
+console.log("banana", usuario?.value.imagem_perfil);
+
+const fetchUserData = async () => {
   const token = localStorage.getItem("token");
+  const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  usuario.value.userId = decodedToken.userId;
 
-  if (token) {
-    try {
-      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  try {
+    const response = await axios.get(
+      `http://localhost:3333/api/usuario/${usuario.value.userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      usuario.value.nome = decodedToken.nome_completo;
-      usuario.value.imagem_perfil = decodedToken.imagem_perfil;
-      console.log(usuario.value.imagem_perfil);
-      console.log("banana", usuario.value.nome);
-    } catch (error) {
-      console.error("Erro ao decodificar o token:", error);
-    }
-  } else {
-    console.log("Nenhum token encontrado no localStorage");
+    const userData = response.data;
+    usuario.value.nome = userData.usuario.nome_completo;
+    usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
+  } catch (error) {
+    console.error("Erro ao obter dados do usuário:", error);
   }
+};
+
+onMounted(() => {
+  fetchUserData();
+
+  // const token = localStorage.getItem("token");
+
+  // if (token) {
+  //   try {
+  //     const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+  //     usuario.value.nome = decodedToken.nome_completo;
+  //     usuario.value.imagem_perfil = decodedToken.imagem_perfil;
+  //   } catch (error) {
+  //     console.error("Erro ao decodificar o token:", error);
+  //   }
+  // } else {
+  //   console.log("Nenhum token encontrado no localStorage");
+  // }
 });
 </script>
 

@@ -191,7 +191,7 @@ export default defineComponent({
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+            `http://localhost:3333/api/usuario/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -236,6 +236,14 @@ export default defineComponent({
   color: black;
 }
 
+/* .playlist li {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3636362b;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+} */
+
 .playlist li path {
   fill: #000;
   cursor: pointer;
@@ -262,7 +270,7 @@ export default defineComponent({
 
 .composition-item {
   display: grid;
-  grid-template-columns: 0fr 0.5fr 1fr 1fr 0fr;
+  grid-template-columns: 0fr 0fr 1fr 1fr 0fr;
   align-items: center;
 }
 
@@ -288,5 +296,17 @@ export default defineComponent({
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  .playlist-container {
+    border: 1px solid #f5f5f5;
+    opacity: 100%;
+    width: 100%;
+    border-radius: 5px;
+    height: 290px;
+    overflow-y: overlay;
+    margin-top: 20px;
+  }
 }
 </style>

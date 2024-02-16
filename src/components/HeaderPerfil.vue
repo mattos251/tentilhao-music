@@ -7,7 +7,7 @@
             <figure class="image is-128x128 figure-image">
               <img
                 class="profile-image is-rounded"
-                :src="usuario.imagem_perfil"
+                :src="usuario.imagem_perfil ? usuario.imagem_perfil : imagem_padrao"
                 alt="User Image"
               />
             </figure>
@@ -22,9 +22,9 @@
                 <router-link to="/homepage" class="nav-link">
                   <li>Home</li>
                 </router-link>
-                <router-link to="/feeds" class="nav-link">
+                <!-- <router-link to="/feeds" class="nav-link">
                   <li>Feed</li>
-                </router-link>
+                </router-link> -->
               </ul>
             </div>
           </div>
@@ -52,15 +52,18 @@ const usuario = ref({
   nome: "",
   tipo_usuario: "",
   imagem_perfil: "",
+  imagem_padrão: "../assets/OIP.jpg",
   userId: "",
 });
+
+console.log("banana cru", usuario.value.imagem_perfil);
 
 const fetchUserData = async () => {
   const token = localStorage.getItem("token");
 
   try {
     const response = await axios.get(
-      `http://localhost:3333/api/usuarios/${usuario.value.userId}`,
+      `http://localhost:3333/api/usuario/${usuario.value.userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,12 +75,7 @@ const fetchUserData = async () => {
 
     usuario.value.nome = userData.usuario.nome_completo;
     usuario.value.tipo_usuario = userData.usuario.tipo_usuario_id;
-
-    if (userData.usuario.imagem_perfil != null) {
-      usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
-    }
-
-    usuario.value.imagem_perfil = imagem_padrao.value;
+    usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
   } catch (error) {
     console.error("Erro ao obter dados do usuário:", error);
   }

@@ -5,7 +5,7 @@
         <li
           v-for="(composition, index) in compositions"
           :key="index"
-          class="composition-item"
+          class="composition-items"
         >
           <div class="icons">
             <svg-icon
@@ -95,7 +95,7 @@ export default defineComponent({
       // Iterar sobre as composições filtradas para buscar o nome do usuário
       for (const composition of filteredCompositions) {
         const userResponse = await axios.get(
-          `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
+          `http://localhost:3333/api/usuario/${composition.usuario_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
 .playlist-container {
   border: 1px solid #f5f5f5;
   opacity: 100%;
@@ -147,7 +147,7 @@ export default defineComponent({
   cursor: pointer;
 }
 
-.composition-item {
+.composition-items {
   display: grid;
   grid-template-columns: 0fr 1fr 1fr 0fr;
   align-items: center;
