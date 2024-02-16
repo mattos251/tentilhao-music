@@ -2,31 +2,35 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center">
       <ul class="playlist">
-        <li v-for="(composition, index) in compositions" :key="index">
-          <div
-            class="icons is-flex is-align-items-center is-justify-content-space-between"
-          >
+        <li
+          v-for="(composition, index) in compositions"
+          :key="index"
+          class="composition-item"
+        >
+          <div class="icons">
             <svg-icon
               type="mdi"
               :path="Play"
               @click="handlePlayClick(composition)"
             ></svg-icon>
-            <p>{{ composition.userName }}</p>
-            <p>{{ composition.titulo }}</p>
-            <div class="is-flex">
-              <router-link
-                :to="{
-                  name: 'PaginaPerfilID',
-                  params: { userId: composition.usuario_id },
-                }"
-              >
-                <svg-icon type="mdi" :path="profile"></svg-icon>
-              </router-link>
+          </div>
 
-              <!-- <a @click="enviarMensagem(composition.compositorPhoneNumber)">
+          <p class="info userName">{{ composition.userName }}</p>
+          <p class="info titulo">{{ composition.titulo }}</p>
+
+          <div class="actions">
+            <router-link
+              :to="{
+                name: 'PaginaPerfilID',
+                params: { userId: composition.usuario_id },
+              }"
+            >
+              <svg-icon type="mdi" :path="profile"></svg-icon>
+            </router-link>
+
+            <!-- <a @click="enviarMensagem(composition.compositorPhoneNumber)">
                 <svg-icon type="mdi" :path="Sendmessage"></svg-icon>
               </a> -->
-            </div>
           </div>
         </li>
       </ul>
@@ -77,14 +81,11 @@ export default defineComponent({
   async mounted() {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "https://tentilhao-backend.vercel.app/api/composicoes",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get("http://localhost:3333/api/composicoes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       // Filtrar composições com base no gênero selecionado
       const filteredCompositions = response.data.filter(
@@ -94,7 +95,7 @@ export default defineComponent({
       // Iterar sobre as composições filtradas para buscar o nome do usuário
       for (const composition of filteredCompositions) {
         const userResponse = await axios.get(
-          `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
+          `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -144,6 +145,31 @@ export default defineComponent({
 .playlist li path {
   fill: #000;
   cursor: pointer;
+}
+
+.composition-item {
+  display: grid;
+  grid-template-columns: 0fr 1fr 1fr 0fr;
+  align-items: center;
+}
+
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media screen and (max-width: 768px) {

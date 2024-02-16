@@ -41,70 +41,68 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import axios from "axios";
 import { ref, onMounted } from "vue";
+import imagemPadrao from "../assets/OIP.jpg";
 
-export default {
-  name: "HeaderPerfil",
+const imagem_padrao = ref(imagemPadrao);
 
-  setup() {
-    const usuario = ref({
-      nome: "",
-      tipo_usuario: "",
-      imagem_perfil: "",
-      userId: "",
-    });
+const usuario = ref({
+  nome: "",
+  tipo_usuario: "",
+  imagem_perfil: "",
+  userId: "",
+});
 
-    const fetchUserData = async () => {
-      const token = localStorage.getItem("token");
+const fetchUserData = async () => {
+  const token = localStorage.getItem("token");
 
-      try {
-        const response = await axios.get(
-          `https://tentilhao-backend.vercel.app/api/usuarios/${usuario.value.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const userData = response.data;
-
-        usuario.value.nome = userData.usuario.nome_completo;
-        usuario.value.tipo_usuario = userData.usuario.tipo_usuario_id;
-        usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
-      } catch (error) {
-        console.error("Erro ao obter dados do usuário:", error);
+  try {
+    const response = await axios.get(
+      `http://localhost:3333/api/usuarios/${usuario.value.userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    };
+    );
 
-    onMounted(() => {
-      const token = localStorage.getItem("token");
+    const userData = response.data;
 
-      if (token) {
-        try {
-          const decodedToken = JSON.parse(atob(token.split(".")[1]));
-          usuario.value.userId = decodedToken.userId;
-        } catch (error) {
-          console.error("Erro ao decodificar o token:", error);
-        }
-      } else {
-        console.log("Nenhum token encontrado no localStorage");
-      }
+    usuario.value.nome = userData.usuario.nome_completo;
+    usuario.value.tipo_usuario = userData.usuario.tipo_usuario_id;
 
-      fetchUserData();
+    if (userData.usuario.imagem_perfil != null) {
+      usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
+    }
 
-      setInterval(() => {
-        fetchUserData();
-      }, 300000);
-    });
-
-    return {
-      usuario,
-    };
-  },
+    usuario.value.imagem_perfil = imagem_padrao.value;
+  } catch (error) {
+    console.error("Erro ao obter dados do usuário:", error);
+  }
 };
+
+onMounted(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      usuario.value.userId = decodedToken.userId;
+    } catch (error) {
+      console.error("Erro ao decodificar o token:", error);
+    }
+  } else {
+    console.log("Nenhum token encontrado no localStorage");
+  }
+
+  fetchUserData();
+
+  setInterval(() => {
+    fetchUserData();
+  }, 300000);
+});
 </script>
 
 <style scoped>

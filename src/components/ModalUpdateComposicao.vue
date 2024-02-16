@@ -101,13 +101,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
-import {
-  getDownloadURL,
-  ref as storageRef,
-  uploadBytesResumable,
-} from "firebase/storage";
+// import {
+//   getDownloadURL,
+//   ref as storageRef,
+//   uploadBytesResumable,
+// } from "firebase/storage";
 import axios from "axios";
-import { storage } from "../firebase";
+// import { storage } from "../firebase";
 
 const selectedGenre = ref(1);
 // const audioFile = ref<File | null>(null);
@@ -197,7 +197,7 @@ const submitComposition = async () => {
 
     // Fazendo um pedido PUT
     await axios.put(
-      `https://tentilhao-backend.vercel.app/api/atualizar/Composicao/${compositionId}`,
+      `http://localhost:3333/api/atualizar/Composicao/${compositionId}`,
       compositionData,
       {
         headers: {

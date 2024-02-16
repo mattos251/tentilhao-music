@@ -185,19 +185,10 @@ export default {
       }
     },
 
-    // Atualize o método pauseComposition para pausar efetivamente a música e atualizar o estado isPlaying
     pauseComposition(this: PlayMusic): void {
       this.music.element.pause();
       this.$store.commit("setIsPlaying", false);
     },
-
-    // toggleVolumeControl() {
-    //   this.showVolume = !this.showVolume;
-    // },
-
-    // handleResize() {
-    //   this.showVolume = window.innerWidth > 780;
-    // },
 
     handleSeek(this: PlayMusic): void {
       this.music.element.currentTime = this.seekbar.value;
@@ -206,29 +197,7 @@ export default {
     handleVolumeChange(this: PlayMusic): void {
       this.music.element.volume = this.volume.range / 100;
     },
-    handlePrevious(this: PlayMusic): void {
-      // Adicione a lógica para reproduzir a faixa anterior
-      // const currentIndex = this.$store.state.musicPlayer.selectedCompositionIndex;
-      // const compositions = this.$store.state.musicPlayer.compositions;
-      // if (currentIndex > 0) {
-      //   const previousComposition = compositions[currentIndex - 1];
-      //   this.playComposition(previousComposition);
-      // }
-    },
-    handleNext(this: PlayMusic): void {
-      // Adicione a lógica para reproduzir a próxima faixa
-      // const currentIndex = this.$store.state.musicPlayer.selectedCompositionIndex;
-      // const compositions = this.$store.state.musicPlayer.compositions;
-      // if (currentIndex < compositions.length - 1) {
-      //   const nextComposition = compositions[currentIndex + 1];
-      //   this.playComposition(nextComposition);
-      // } else {
-      //   // Se estiver na última faixa, pode implementar algum comportamento desejado,
-      //   // como reiniciar a reprodução desde o início ou parar a reprodução.
-      //   // Neste exemplo, apenas pausa a reprodução.
-      //   this.pauseComposition();
-      // }
-    },
+
     formatTime(time: number): string {
       const minutes = Math.floor(time / 60);
       const seconds = Math.floor(time % 60);
@@ -236,19 +205,6 @@ export default {
     },
   },
   mounted(this: PlayMusic): void {
-    this.$watch(
-      () => this.$store.getters["musicPlayer/getSelectedComposition"],
-      (newComposition: any) => {
-        if (newComposition) {
-          // Se houver uma nova composição, reproduza-a
-          this.playComposition(newComposition);
-        }
-      }
-    );
-
-    // Inicie a reprodução com a composição atual
-    this.playComposition(this.currentComposition);
-
     this.music.element.addEventListener("error", (event) => {
       this.playComposition(this.currentComposition);
       console.error("Erro no elemento de áudio:", event);
@@ -268,13 +224,6 @@ export default {
       // Adicione a lógica para reproduzir a próxima faixa automaticamente
       this.handleNext();
     });
-
-    // window.addEventListener("resize", this.handleResize);
-    // this.handleResize();
-    // this.music.element.addEventListener("pause", () => {
-    //   // Atualiza o estado isPlaying para false após a pausa
-    //   this.$store.commit("setIsPlaying", true);
-    // });
   },
 };
 

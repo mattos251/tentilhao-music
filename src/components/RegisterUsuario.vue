@@ -129,7 +129,7 @@ export default defineComponent({
   async mounted() {
     try {
       const response = await axios.get(
-        "https://tentilhao-backend.vercel.app/api/generos"
+        "http://localhost:3333/api/generos"
       );
       this.genres = response.data;
     } catch (error: any) {
@@ -152,7 +152,7 @@ export default defineComponent({
         };
 
         const response = await fetch(
-          "https://tentilhao-backend.vercel.app/api/usuarios/cadastro",
+          "http://localhost:3333/api/usuarios/cadastro",
           {
             method: "POST",
             headers: {

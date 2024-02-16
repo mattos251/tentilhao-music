@@ -2,35 +2,39 @@
   <div class="music-playlist is-flex is-justify-content-center">
     <div class="playlist-container is-flex is-justify-content-center p-4">
       <ul class="playlist">
-        <li v-for="(composition, index) in compositions" :key="index">
-          <div
-            class="icons is-flex is-align-items-center is-justify-content-space-between"
-          >
-            <div class="img_capa">
-              <img :src="composition.imagem_capa" alt="" />
-            </div>
+        <li
+          v-for="(composition, index) in compositions"
+          :key="index"
+          class="composition-item"
+        >
+          <div class="img_capa">
+            <img :src="composition.imagem_capa" alt="" />
+          </div>
+
+          <div class="icons">
             <svg-icon
               type="mdi"
               :path="Play"
               @click="handlePlayClick(composition)"
             ></svg-icon>
-
-            <p>{{ composition.userName }}</p>
-            <p>{{ composition.titulo }}</p>
-
-            <div class="is-flex">
-              <svg-icon
-                type="mdi"
-                :path="Delete"
-                @click="openModal('del', composition.id)"
-              ></svg-icon>
-              <svg-icon
-                type="mdi"
-                :path="Editar"
-                @click="showModalUpdateClick(composition)"
-              ></svg-icon>
-            </div>
           </div>
+
+          <p class="info userName">{{ composition.userName }}</p>
+          <p class="info titulo">{{ composition.titulo }}</p>
+
+          <div class="actions">
+            <svg-icon
+              type="mdi"
+              :path="Delete"
+              @click="openModal('del', composition.id)"
+            ></svg-icon>
+            <svg-icon
+              type="mdi"
+              :path="Editar"
+              @click="showModalUpdateClick(composition)"
+            ></svg-icon>
+          </div>
+
           <ModalUpdateComposicao
             class="modal"
             v-if="showModalUpdate"
@@ -135,7 +139,7 @@ export default defineComponent({
           const token = localStorage.getItem("token");
 
           const response = await axios.delete(
-            `https://tentilhao-backend.vercel.app/api/deletar/Composicao/${compositionId}`,
+            `http://localhost:3333/api/deletar/Composicao/${compositionId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -177,7 +181,7 @@ export default defineComponent({
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `https://tentilhao-backend.vercel.app/api/composicoesUser/${userId}`,
+          `http://localhost:3333/api/composicoesUser/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -187,7 +191,7 @@ export default defineComponent({
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
+            `http://localhost:3333/api/usuarios/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -232,14 +236,6 @@ export default defineComponent({
   color: black;
 }
 
-/* .playlist li {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #3636362b;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-} */
-
 .playlist li path {
   fill: #000;
   cursor: pointer;
@@ -262,5 +258,35 @@ export default defineComponent({
   border-bottom: 1px solid #3636362b;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.composition-item {
+  display: grid;
+  grid-template-columns: 0fr 0.5fr 1fr 1fr 0fr;
+  align-items: center;
+}
+
+.img_capa img {
+  max-width: 100%;
+  height: auto;
+}
+
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

@@ -196,7 +196,7 @@ export default defineComponent({
   async mounted() {
     try {
       const response = await axios.get(
-        "https://tentilhao-backend.vercel.app/api/generos"
+        "http://localhost:3333/api/generos"
       );
       this.genres = response.data;
     } catch (error: any) {
@@ -290,7 +290,7 @@ export default defineComponent({
 
           const token = localStorage.getItem("token");
           const response = await axios.put(
-            `https://tentilhao-backend.vercel.app/api/usuarios/updateUser/${UserId}`,
+            `http://localhost:3333/api/usuarios/updateUser/${UserId}`,
             userData,
             {
               headers: {
@@ -332,7 +332,7 @@ export default defineComponent({
 
           const token = localStorage.getItem("token");
           const response = await axios.put(
-            `https://tentilhao-backend.vercel.app/api/usuarios/updateUser/${UserId}`,
+            `http://localhost:3333/api/usuarios/updateUser/${UserId}`,
             userData,
             {
               headers: {

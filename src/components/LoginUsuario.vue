@@ -70,17 +70,13 @@ export default defineComponent({
     const email = ref("");
     const password = ref("");
     const loginError = ref<string | null>(null);
-    const store = useStore();
 
     const EnvioLogin = async () => {
       try {
-        const response = await axios.post(
-          "https://tentilhao-backend.vercel.app/api/login",
-          {
-            email: email.value,
-            password: password.value,
-          }
-        );
+        const response = await axios.post("http://localhost:3333/api/login", {
+          email: email.value,
+          password: password.value,
+        });
 
         if (response.data.token) {
           const token = response.data.token;

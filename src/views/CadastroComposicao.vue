@@ -1,5 +1,5 @@
 <template>
-  <div class="container are-cadastro">
+  <div class="are-cadastro">
     <div class="content">
       <h1>Cadastre sua composição</h1>
       <div class="form-page">
@@ -93,7 +93,11 @@
         </button>
       </div>
 
-      <a v-if="loading" class="button is-loading">Loading</a>
+      <!-- <a  class="button is-loading">Loading</a> -->
+      <div v-if="loading">
+        <progress class="progress is-large is-info" max="100"></progress>
+        <h6 class="is-flex is-justify-content-center">Realizando cadastro...</h6>
+      </div>
     </div>
   </div>
 </template>
@@ -147,6 +151,11 @@ const submitComposition = async () => {
     const audioStorageRef = storageRef(storage, `audio/${audioFile.value.name}`);
     const imageStorageRef = storageRef(storage, `images/${imageFile.value.name}`);
 
+    console.log({
+      audioStorageRef,
+      imageStorageRef,
+    });
+
     const [audioUploadTask, imageUploadTask] = await Promise.all([
       uploadBytesResumable(audioStorageRef, audioFile.value),
       uploadBytesResumable(imageStorageRef, imageFile.value),
@@ -181,7 +190,7 @@ const submitComposition = async () => {
 
     const token = localStorage.getItem("token");
     await axios.post(
-      "https://tentilhao-backend.vercel.app/api/cadastro/ComposicaoUser",
+      "http://localhost:3333/api/cadastro/ComposicaoUser",
       compositionData,
       {
         headers: {
@@ -201,7 +210,7 @@ const submitComposition = async () => {
 onMounted(async () => {
   try {
     const [genresResponse] = await Promise.all([
-      axios.get("https://tentilhao-backend.vercel.app/api/generos"),
+      axios.get("http://localhost:3333/api/generos"),
     ]);
     genres.value = genresResponse.data;
   } catch (error: any) {
@@ -221,22 +230,20 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  height: 100vh;
-  background: url("../assets/back-capa.png");
+  height: 90vh;
 }
 
 .content {
   margin-top: 40px;
   padding: 32px;
   min-width: 40px;
-  background: #049bf03d;
+  background: #013a59;
   position: relative;
   width: 100%;
   height: 600px;
   max-width: 570px;
   backdrop-filter: blur(4px);
   border-radius: 18px;
-  /* filter: blur(4px); */
 }
 
 .content h1 {
@@ -245,6 +252,9 @@ onMounted(async () => {
   color: white;
 }
 .content h6 {
+  color: white;
+}
+h6 {
   color: white;
 }
 
@@ -295,18 +305,15 @@ select {
   .are-cadastro {
     display: flex;
     justify-content: center;
-    align-items: center; /* Adiciona alinhamento vertical no centro */
-    /* Garante que o contêiner ocupe 100% da altura da tela */
   }
 
   .content {
     padding: 10px;
     top: 0;
     width: 90%;
-    position: absolute;
-    background: #049bf03d;
-    border-radius: 5px;
-    height: auto;
+    background: #013a59;
+    border-radius: 30px;
+    height: 500px;
   }
 
   .file {
@@ -329,7 +336,7 @@ select {
   }
 
   .content h1 {
-    font-size: 21px;
+    font-size: 16px;
     margin-bottom: 0.5em;
   }
 }

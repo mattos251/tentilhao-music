@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getStorage } from "firebase/storage";
 
 
@@ -12,7 +12,15 @@ const firebaseConfig = {
   measurementId: process.env.VUE_APP_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app, "gs://tentilhao-5d475.appspot.com");
+let firebaseApp: FirebaseApp;
+
+try {
+  firebaseApp = initializeApp(firebaseConfig);
+} catch (error) {
+  console.error('Erro ao inicializar o Firebase:', error);
+  throw error; // Rethrow para interromper a execução se ocorrer um erro na inicialização
+}
+
+const storage = getStorage(firebaseApp, 'gs://tentilhao-5d475.appspot.com');
 
 export { storage };

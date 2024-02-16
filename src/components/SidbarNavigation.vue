@@ -1,5 +1,5 @@
 <template>
-  <div class="columns menu-sidbar is-centered">
+  <div class="columns menu-sidbar is-centered m-0">
     <div class="column is-12">
       <div class="area-navegacao">
         <div class="perfil-usuario">
@@ -7,7 +7,7 @@
             <figure class="image is-128x128">
               <img
                 class="is-fullwidth"
-                :src="usuario.imagem_perfil || '../assets/OIP.jpg'"
+                :src="imagem_perfil ? imagem_perfil : imagem_padrao"
                 alt="Imagem do Perfil"
                 loading="lazy"
               />
@@ -42,39 +42,15 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted } from "vue";
+import imagemPadrao from "@/assets/OIP.jpg";
+
+const imagem_padrao = ref(imagemPadrao);
 
 const usuario = ref({
   nome: "",
   imagem_perfil: "",
   userId: "",
 });
-
-const fetchUserData = async () => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    const UserId = usuario.value.userId;
-    try {
-      const response = await axios.get(
-        `https://tentilhao-backend.vercel.app/api/usuarios/${UserId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const userData = response.data;
-
-      usuario.value.nome = userData.usuario.nome_completo;
-      usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
-    } catch (error) {
-      console.error("Erro ao obter dados do usuário:", error);
-    }
-  } else {
-    console.log("Nenhum token encontrado no localStorage");
-  }
-};
 
 const logout = () => {
   localStorage.removeItem("token");
@@ -90,6 +66,8 @@ onMounted(() => {
 
       usuario.value.nome = decodedToken.nome_completo;
       usuario.value.imagem_perfil = decodedToken.imagem_perfil;
+      console.log(usuario.value.imagem_perfil);
+      console.log("banana", usuario.value.nome);
     } catch (error) {
       console.error("Erro ao decodificar o token:", error);
     }
@@ -116,8 +94,7 @@ onMounted(() => {
   border-bottom: 4px solid #036faa;
   background: #e4f2ff;
   opacity: 85%;
-  height: 100vh;
-  margin: 0;
+  height: 100%;
 }
 
 .menu-nav li {
@@ -151,6 +128,14 @@ onMounted(() => {
   margin-top: 20px;
 }
 
+&::-webkit-scrollbar {
+  width: 12px; /* Largura da barra de rolagem */
+}
+
+&::-webkit-scrollbar-thumb {
+  background-color: #036faa; /* Cor do polegar (barra de rolagem ativa) */
+  border-radius: 6px; /* Borda do polegar da barra de rolagem */
+}
 @media screen and (max-width: 768px) {
   .menu-sidbar {
     height: auto;
