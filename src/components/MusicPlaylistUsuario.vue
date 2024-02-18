@@ -83,19 +83,18 @@ export default defineComponent({
       Play: mdiPlay,
       Delete: mdiDelete,
       Editar: mdiSquareEditOutline,
-      compositions: [] as any[], // Defina o tipo apropriado para as composições
-      compositionToUpdate: null as any | null, // Defina o tipo apropriado para a composição a ser atualizada
+      compositions: [] as any[],
+      compositionToUpdate: null as any | null,
       showModalDelete: false,
       showModalUpdate: false,
       compositionToDeleteId: null as number | null,
     };
   },
-  watch: {
-    compositions(newCompositions) {
-      console.log("compositions foi atualizado:", newCompositions);
-      // Você pode adicionar ações adicionais aqui se necessário
-    },
-  },
+  // watch: {
+  //   compositions(newCompositions) {
+  //     console.log("compositions foi atualizado:", newCompositions);
+  //   },
+  // },
   mounted() {
     this.showModalUpdate = false;
 
@@ -109,12 +108,10 @@ export default defineComponent({
   methods: {
     showModalUpdateClick(composition: any) {
       this.compositionToUpdate = composition;
-      console.log("banana", this.compositionToUpdate);
       this.showModalUpdate = true;
     },
 
     fecharModalUpdate() {
-      // Fechar o modal de atualização
       this.showModalUpdate = false;
     },
     openModal(modalType: string, compositionId: number) {
@@ -122,20 +119,16 @@ export default defineComponent({
         this.showModalDelete = !this.showModalDelete;
         this.compositionToDeleteId = compositionId;
       } else if (modalType === "put") {
-        // Busque a composição a ser editada
         this.compositionToUpdate = this.compositions.find(
           (composition) => composition.id === compositionId
         );
         this.showModalUpdate = true;
       }
-      // Adicione a lógica para outros tipos de modal, se necessário
     },
 
     async removeMusic(compositionId: number | null) {
       try {
         if (compositionId !== null) {
-          // Lógica para remover a música usando o ID
-          console.log("Removendo música com o ID:", compositionId);
           const token = localStorage.getItem("token");
 
           const response = await axios.delete(
@@ -149,10 +142,6 @@ export default defineComponent({
           window.location.reload();
 
           this.openModal("del", compositionId);
-
-          // Incrementar a chave para forçar o remontagem do component
-
-          console.log("Música removida com sucesso!", response);
         }
       } catch (error) {
         console.error("Erro ao remover a música:", error);
@@ -162,7 +151,7 @@ export default defineComponent({
     ...mapActions("musicPlayer", ["selectComposition"]),
 
     handlePlayClick(composition: any) {
-      this.selectComposition(composition); // Chame a ação para selecionar a composição
+      this.selectComposition(composition);
     },
 
     decodeToken(token: string) {
@@ -177,7 +166,7 @@ export default defineComponent({
       }
     },
 
-    async fetchComposicoes(userId: any, token: string) {
+    async fetchComposicoes(userId: number, token: string) {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
@@ -199,20 +188,14 @@ export default defineComponent({
             }
           );
 
-          // Adicionar o nome do usuário à composição
           composition.userName = userResponse.data.usuario.nome_completo;
         }
 
         this.compositions = response.data;
-        console.log(this.compositions);
       } catch (error) {
         console.error("Erro ao buscar composições:", error);
       }
     },
-
-    // closeModal() {
-    //   this.isModalOpen = false;
-    // },
   },
 });
 </script>
@@ -235,14 +218,6 @@ export default defineComponent({
 .playlist .icons p {
   color: black;
 }
-
-/* .playlist li {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #3636362b;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-} */
 
 .playlist li path {
   fill: #000;

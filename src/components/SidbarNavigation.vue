@@ -57,8 +57,6 @@ const logout = () => {
   location.reload();
 };
 
-console.log("banana", usuario?.value.imagem_perfil);
-
 const fetchUserData = async () => {
   const token = localStorage.getItem("token");
   const decodedToken = JSON.parse(atob(token.split(".")[1]));
@@ -84,21 +82,6 @@ const fetchUserData = async () => {
 
 onMounted(() => {
   fetchUserData();
-
-  // const token = localStorage.getItem("token");
-
-  // if (token) {
-  //   try {
-  //     const decodedToken = JSON.parse(atob(token.split(".")[1]));
-
-  //     usuario.value.nome = decodedToken.nome_completo;
-  //     usuario.value.imagem_perfil = decodedToken.imagem_perfil;
-  //   } catch (error) {
-  //     console.error("Erro ao decodificar o token:", error);
-  //   }
-  // } else {
-  //   console.log("Nenhum token encontrado no localStorage");
-  // }
 });
 </script>
 

@@ -56,8 +56,6 @@ const usuario = ref({
   userId: "",
 });
 
-console.log("banana cru", usuario.value.imagem_perfil);
-
 const fetchUserData = async () => {
   const token = localStorage.getItem("token");
 

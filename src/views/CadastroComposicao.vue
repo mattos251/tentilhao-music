@@ -239,6 +239,7 @@ onMounted(async () => {
   min-width: 40px;
   background: #013a59;
   position: relative;
+  align-self: center;
   width: 100%;
   height: 600px;
   max-width: 570px;

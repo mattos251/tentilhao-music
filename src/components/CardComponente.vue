@@ -61,7 +61,7 @@ export default defineComponent({
 .cards-lists {
   display: flex;
   width: 100%;
-  height: 540px;
+  height: 75vh;
   cursor: pointer;
   overflow: auto;
 }
@@ -99,14 +99,7 @@ export default defineComponent({
     flex: none;
     width: 30%;
   }
-  .title-genres {
-    display: flex;
-    margin-top: 30px;
-    color: #519bc4;
-    justify-content: center;
-    font-size: x-large;
-    margin-bottom: 30px;
-  }
+
   .card-box {
     border: 1px solid #0093ff42;
     border-radius: 18px;
