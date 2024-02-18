@@ -1,6 +1,6 @@
 <template>
-  <div class="container is-full is-justify-content-space-around cards-lists">
-    <div class="columns is-multiline is-flex is-justify-content-space-around">
+  <div class="is-full is-justify-content-space-around cards-lists">
+    <div class="columns card-area is-multiline is-flex is-justify-content-space-around">
       <div
         v-for="card in cards"
         :key="card.id"
@@ -10,7 +10,7 @@
           <div class="image is-1by1">
             <img :src="card.imagem_genero" alt="Card Image" />
           </div>
-          <h2>{{ card.genero }}</h2>
+          <h2 class="title-genres">{{ card.genero }}</h2>
         </div>
       </div>
     </div>
@@ -30,9 +30,7 @@ export default defineComponent({
   },
   async mounted() {
     try {
-      const response = await axios.get(
-        "https://tentilhao-backend.vercel.app/api/generos"
-      );
+      const response = await axios.get("http://localhost:3333/api/generos");
       this.cards = response.data;
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
@@ -56,11 +54,29 @@ export default defineComponent({
   padding: 0;
 }
 
+.card-area {
+  width: 100%;
+}
+
 .cards-lists {
   display: flex;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 75vh;
   cursor: pointer;
+  overflow: auto;
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* Largura da barra de rolagem */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #036faa; /* Cor do polegar (barra de rolagem ativa) */
+  border-radius: 6px; /* Borda do polegar da barra de rolagem */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #e4f2ff; /* Cor do fundo da barra de rolagem */
 }
 
 .title-card h2 {
@@ -83,12 +99,17 @@ export default defineComponent({
     flex: none;
     width: 30%;
   }
-  .title-generos {
-    display: flex;
-    text-align: center;
-    margin-top: 50px;
-    color: #519bc4;
-    margin-bottom: 30px;
+
+  .card-box {
+    border: 1px solid #0093ff42;
+    border-radius: 18px;
+    margin: 6px;
+    width: 20%;
+    height: auto;
+  }
+
+  .card-area {
+    width: auto;
   }
 }
 </style>

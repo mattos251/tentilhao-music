@@ -67,21 +67,22 @@
             <div class="music-playlist is-flex is-justify-content-center">
               <div class="playlist-container is-flex is-justify-content-center">
                 <ul class="playlist">
-                  <li v-for="(composition, index) in compositions" :key="index">
-                    <div
-                      class="icons is-flex is-align-items-center is-justify-content-space-between"
-                    >
-                      <svg-icon
-                        type="mdi"
-                        :path="Play"
-                        @click="handlePlayClick(composition)"
-                      ></svg-icon>
-                      <p>{{ composition.userName }}</p>
-                      <p>{{ composition.titulo }}</p>
-                      <a @click="enviarMensagem(numero_telefone)">
-                        <svg-icon type="mdi" :path="Sendmessage"></svg-icon>
-                      </a>
-                    </div>
+                  <li
+                    v-for="(composition, index) in compositions"
+                    :key="index"
+                    class="composition-item"
+                  >
+                    <svg-icon
+                      class="icons"
+                      type="mdi"
+                      :path="Play"
+                      @click="handlePlayClick(composition)"
+                    ></svg-icon>
+                    <p class="info">{{ composition.userName }}</p>
+                    <p class="info">{{ composition.titulo }}</p>
+                    <a @click="enviarMensagem(numero_telefone)">
+                      <svg-icon class="actions" type="mdi" :path="Sendmessage"></svg-icon>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -164,14 +165,11 @@ export default defineComponent({
 
     const userId = this.$route.params.userId;
 
-    const response = await axios.get(
-      `https://tentilhao-backend.vercel.app/api/usuarios/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`http://localhost:3333/api/usuario/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     this.usuario = response.data.usuario;
     this.numero_telefone = this.usuario.numero_telefone;
@@ -204,7 +202,7 @@ export default defineComponent({
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `https://tentilhao-backend.vercel.app/api/composicoesUser/${userId}`,
+          `http://localhost:3333/api/composicoesUser/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -214,7 +212,7 @@ export default defineComponent({
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `https://tentilhao-backend.vercel.app/api/usuarios/${composition.usuario_id}`,
+            `http://localhost:3333/api/usuario/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -281,10 +279,10 @@ export default defineComponent({
   border-bottom: 1px solid #ffff;
 }
 
-.media-content p {
+/* .media-content p {
   color: white;
   padding-left: 10px;
-}
+} */
 .logo-perfil {
   display: flex;
   justify-content: center;
@@ -292,10 +290,10 @@ export default defineComponent({
   height: auto;
 }
 
-.contente-perfil {
+/* .contente-perfil {
   display: flex;
   justify-content: center;
-}
+} */
 
 .playlist-container {
   border: 1px solid #f5f5f5;
@@ -371,6 +369,31 @@ export default defineComponent({
   display: flex;
   align-items: end;
   justify-content: center;
+}
+
+.composition-item {
+  display: grid;
+  grid-template-columns: 0fr 1fr 1fr 0fr;
+  align-items: center;
+}
+
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
 }
 
 @media screen and (max-width: 768px) {

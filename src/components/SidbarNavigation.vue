@@ -1,5 +1,5 @@
 <template>
-  <div class="columns menu-sidbar is-centered">
+  <div class="columns menu-sidbar is-centered m-0">
     <div class="column is-12">
       <div class="area-navegacao">
         <div class="perfil-usuario">
@@ -7,7 +7,7 @@
             <figure class="image is-128x128">
               <img
                 class="is-fullwidth"
-                :src="usuario.imagem_perfil || '../assets/OIP.jpg'"
+                :src="usuario.imagem_perfil ? usuario.imagem_perfil : imagem_padrao"
                 alt="Imagem do Perfil"
                 loading="lazy"
               />
@@ -32,7 +32,7 @@
             </router-link>
           </li>
 
-          <li><a class="button-logout is-light" @click="logout"> Sair </a></li>
+          <li><a @click="logout"> Sair </a></li>
         </ul>
       </div>
     </div>
@@ -42,6 +42,9 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted } from "vue";
+import imagemPadrao from "@/assets/OIP.jpg";
+
+const imagem_padrao = ref(imagemPadrao);
 
 const usuario = ref({
   nome: "",
@@ -49,53 +52,36 @@ const usuario = ref({
   userId: "",
 });
 
-const fetchUserData = async () => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    const UserId = usuario.value.userId;
-    try {
-      const response = await axios.get(
-        `https://tentilhao-backend.vercel.app/api/usuarios/${UserId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const userData = response.data;
-
-      usuario.value.nome = userData.usuario.nome_completo;
-      usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
-    } catch (error) {
-      console.error("Erro ao obter dados do usuário:", error);
-    }
-  } else {
-    console.log("Nenhum token encontrado no localStorage");
-  }
-};
-
 const logout = () => {
   localStorage.removeItem("token");
   location.reload();
 };
 
-onMounted(() => {
+const fetchUserData = async () => {
   const token = localStorage.getItem("token");
+  const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  usuario.value.userId = decodedToken.userId;
 
-  if (token) {
-    try {
-      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+  try {
+    const response = await axios.get(
+      `http://localhost:3333/api/usuario/${usuario.value.userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      usuario.value.nome = decodedToken.nome_completo;
-      usuario.value.imagem_perfil = decodedToken.imagem_perfil;
-    } catch (error) {
-      console.error("Erro ao decodificar o token:", error);
-    }
-  } else {
-    console.log("Nenhum token encontrado no localStorage");
+    const userData = response.data;
+    usuario.value.nome = userData.usuario.nome_completo;
+    usuario.value.imagem_perfil = userData.usuario.imagem_perfil;
+  } catch (error) {
+    console.error("Erro ao obter dados do usuário:", error);
   }
+};
+
+onMounted(() => {
+  fetchUserData();
 });
 </script>
 
@@ -116,8 +102,7 @@ onMounted(() => {
   border-bottom: 4px solid #036faa;
   background: #e4f2ff;
   opacity: 85%;
-  height: 100vh;
-  margin: 0;
+  height: 100%;
 }
 
 .menu-nav li {
