@@ -53,7 +53,7 @@ export default defineComponent({
       const genre = this.$store.state.selectedGenre;
 
       // Filtre as músicas com base no gênero selecionado
-      return this.$store.state.songs.filter((song: { genre: any }) => {
+      return this.$store.state.songs.filter((song: { genre: string }) => {
         return song.genre === genre;
       });
     },

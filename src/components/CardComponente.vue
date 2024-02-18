@@ -66,16 +66,16 @@ export default defineComponent({
   overflow: auto;
 }
 
-&::-webkit-scrollbar {
-  width: 12px; /* Largura da barra de rolagem */
+::-webkit-scrollbar {
+  width: 8px; /* Largura da barra de rolagem */
 }
 
-&::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background-color: #036faa; /* Cor do polegar (barra de rolagem ativa) */
   border-radius: 6px; /* Borda do polegar da barra de rolagem */
 }
 
-&::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background-color: #e4f2ff; /* Cor do fundo da barra de rolagem */
 }
 

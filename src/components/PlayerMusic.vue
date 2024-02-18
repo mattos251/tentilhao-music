@@ -60,12 +60,8 @@
       </div>
 
       <div class="controls">
-        <svg-icon
-          class="control-icon"
-          type="mdi"
-          :path="voluAlto"
-          @click="toggleVolumeControl"
-        ></svg-icon>
+        <svg-icon class="control-icon" type="mdi" :path="voluAlto"></svg-icon>
+
         <!-- v-if="showVolume" -->
         <input
           type="range"
@@ -104,6 +100,12 @@ interface Seekbar {
 
 interface Volume {
   range: number;
+}
+
+interface PlayerMusic {
+  [x: string]: any;
+  currentComposition: any; // Adicione o tipo adequado para a composição
+  pauseComposition: () => void; // Adicione a assinatura de pauseComposition à interface
 }
 
 const vuexMixin = {
@@ -151,18 +153,55 @@ export default {
     };
   },
 
+  watch: {
+    // Observa alterações na composição selecionada
+    currentComposition(
+      this: PlayerMusic,
+      newComposition: string,
+      oldComposition: string
+    ): void {
+      if (oldComposition && oldComposition !== newComposition) {
+        // Pausa a reprodução da composição antiga
+        this.pauseComposition();
+        this.playComposition(this.$store.getters["musicPlayer/getSelectedComposition"]);
+      }
+    },
+  },
+
   methods: {
     handlePlayPause(this: PlayMusic): void {
       console.log("isPlaying:", this.isPlaying);
 
-      if (this.isPlaying) {
-        this.pauseComposition();
+      const selectedComposition = this.$store.getters[
+        "musicPlayer/getSelectedComposition"
+      ];
+
+      if (selectedComposition) {
+        // Verifica se a música atualmente tocando é a mesma que foi clicada
+        const isSameComposition =
+          this.currentComposition && this.currentComposition === selectedComposition;
+
+        if (this.isPlaying && isSameComposition) {
+          // Se a música atual está tocando e é a mesma que foi clicada, pause a reprodução
+          this.pauseComposition();
+        } else {
+          // Se a música não está tocando ou é uma nova música, inicie a reprodução
+          if (isSameComposition && this.music.element.currentTime > 0) {
+            // Se for a mesma música e a reprodução não começou do início, retome a reprodução
+            this.music.element.play();
+            this.$store.commit("setIsPlaying", true);
+          } else {
+            // Se for uma nova música ou a reprodução começou do início, inicie a reprodução
+            this.playComposition(selectedComposition);
+          }
+        }
       } else {
-        this.playComposition(this.currentComposition);
+        console.error("Composição não encontrada.");
       }
     },
     playComposition(this: PlayMusic, composition: any): void {
       console.log("composition", composition);
+
       if (
         composition &&
         typeof composition.audio === "string" &&
@@ -171,14 +210,8 @@ export default {
         console.log(composition);
 
         this.music.element.src = composition.audio;
-
-        // Atualiza o estado isPlaying para true antes de tocar
         this.$store.commit("setIsPlaying", true);
-
-        // Inicia a reprodução imediatamente após carregar a nova música
         this.music.element.play();
-
-        // Se necessário, você pode adicionar lógica para selecionar a nova composição
         this["musicPlayer/selectComposition"](composition);
       } else {
         console.error('Composição inválida ou sem propriedade "audio".');
@@ -206,8 +239,13 @@ export default {
   },
   mounted(this: PlayMusic): void {
     this.music.element.addEventListener("error", (event) => {
-      this.playComposition(this.currentComposition);
       console.error("Erro no elemento de áudio:", event);
+      this.pauseComposition(); // Pausa a reprodução em caso de erro
+    });
+
+    this.music.element.addEventListener("canplaythrough", () => {
+      this.music.element.play();
+      this.$store.commit("setIsPlaying", true);
     });
 
     this.music.element.addEventListener("timeupdate", () => {
@@ -218,11 +256,6 @@ export default {
     this.music.element.addEventListener("loadedmetadata", () => {
       this.duration = this.formatTime(this.music.element.duration);
       this.seekbar.max = this.music.element.duration;
-    });
-    // Adicione um listener para lidar com o término da faixa
-    this.music.element.addEventListener("ended", () => {
-      // Adicione a lógica para reproduzir a próxima faixa automaticamente
-      this.handleNext();
     });
   },
 };

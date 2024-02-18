@@ -32,7 +32,7 @@
             </router-link>
           </li>
 
-          <li><a class="button-logout is-light" @click="logout"> Sair </a></li>
+          <li><a @click="logout"> Sair </a></li>
         </ul>
       </div>
     </div>
@@ -136,14 +136,6 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-&::-webkit-scrollbar {
-  width: 12px; /* Largura da barra de rolagem */
-}
-
-&::-webkit-scrollbar-thumb {
-  background-color: #036faa; /* Cor do polegar (barra de rolagem ativa) */
-  border-radius: 6px; /* Borda do polegar da barra de rolagem */
-}
 @media screen and (max-width: 768px) {
   .menu-sidbar {
     height: auto;
