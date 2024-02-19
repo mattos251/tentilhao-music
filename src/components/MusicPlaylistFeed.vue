@@ -15,7 +15,7 @@
             ></svg-icon>
           </div>
 
-          <p class="info userName">{{ composition.userName }}</p>
+          <p class="info userName">{{ composition.nome_usuario }}</p>
           <p class="info titulo">{{ composition.titulo }}</p>
 
           <div class="actions">
@@ -49,7 +49,7 @@ export default defineComponent({
   nome: "MusicPlaylistFeed",
   components: { SvgIcon },
   props: {
-    genre: String, // Adicione esta propriedade para receber o gênero selecionado
+    genero: String, // Adicione esta propriedade para receber o gênero selecionado
   },
   data() {
     return {
@@ -57,8 +57,7 @@ export default defineComponent({
       profile: mdiAccountBox,
       Sendmessage: mdiSendCircleOutline,
       idUser: "",
-      compositions: [],
-      usuario: {},
+      compositions: {},
     };
   },
   methods: {
@@ -81,33 +80,17 @@ export default defineComponent({
   async mounted() {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:3333/api/composicoes", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Filtrar composições com base no gênero selecionado
-      const filteredCompositions = response.data.filter(
-        (composition: { genero: string | undefined }) => composition.genero === this.genre
+      const response = await axios.get(
+        `http://localhost:3333/api/composicoesGeneros/${this.genero}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      // Iterar sobre as composições filtradas para buscar o nome do usuário
-      for (const composition of filteredCompositions) {
-        const userResponse = await axios.get(
-          `http://localhost:3333/api/usuario/${composition.usuario_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // Adicionar o nome do usuário à composição
-        composition.userName = userResponse.data.usuario.nome_completo;
-      }
-
-      this.compositions = filteredCompositions;
+      console.log("response", response.data);
+      this.compositions = response.data;
     } catch (error: any) {
       console.error("Erro ao obter composições:", error.message);
     }

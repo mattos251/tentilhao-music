@@ -8,7 +8,7 @@
           class="banner-central box is-flex is-justify-content-center is-align-items-center"
         >
           <img :src="imagem" alt="" />
-          <h1>{{ genero }}</h1>
+          <h1>{{ nome_genero }}</h1>
         </div>
       </div>
 
@@ -17,7 +17,7 @@
       </div> -->
 
       <section>
-        <MusicPlaylistFeed :filteredSongs="filteredSongs" />
+        <MusicPlaylistFeed :genero="genero" />
       </section>
     </div>
 
@@ -40,22 +40,21 @@ export default defineComponent({
     PlayerMusic,
     NavbarNavigation,
   },
+  data() {
+    return {
+      imagem_genero: "",
+      nome_genero: "",
+    };
+  },
   computed: {
     genero(): string | null {
       const value = this.$store.state.selectedGenre;
       return value;
     },
+
     imagem(): string | null {
       const value = this.$store.state.selectedImage;
       return value;
-    },
-    filteredSongs() {
-      const genre = this.$store.state.selectedGenre;
-
-      // Filtre as músicas com base no gênero selecionado
-      return this.$store.state.songs.filter((song: { genre: string }) => {
-        return song.genre === genre;
-      });
     },
   },
 });
