@@ -130,12 +130,6 @@
           </div>
         </div>
       </div>
-
-      <footer class="footer is-0-desktop is-0-mobile" v-show="activeTab === 'music'">
-        <div class="content">
-          <PlayerMusic />
-        </div>
-      </footer>
     </div>
   </div>
 </template>
@@ -143,7 +137,6 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import HeaderPerfil from "../components/HeaderPerfil.vue";
-import PlayerMusic from "@/components/PlayerMusic.vue";
 import MusicPlaylistUsuario from "@/components/MusicPlaylistUsuario.vue";
 import router from "@/router";
 import axios from "axios";
@@ -153,12 +146,12 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { storage } from "@/firebase";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "PaginaPerfil",
   components: {
     HeaderPerfil,
-    PlayerMusic,
     MusicPlaylistUsuario,
   },
   data() {
@@ -195,7 +188,7 @@ export default defineComponent({
 
   async mounted() {
     try {
-      const response = await axios.get("http://localhost:3333/api/generos");
+      const response = await axios.get(`${apiDomain}/api/generos`);
       this.genres = response.data;
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
@@ -288,7 +281,7 @@ export default defineComponent({
 
           const token = localStorage.getItem("token");
           const response = await axios.put(
-            `http://localhost:3333/api/usuarios/updateUser/${UserId}`,
+            `${apiDomain}/api/usuarios/updateUser/${UserId}`,
             userData,
             {
               headers: {
@@ -330,7 +323,7 @@ export default defineComponent({
 
           const token = localStorage.getItem("token");
           const response = await axios.put(
-            `http://localhost:3333/api/usuarios/updateUser/${UserId}`,
+            `${apiDomain}/api/usuarios/updateUser/${UserId}`,
             userData,
             {
               headers: {
@@ -367,15 +360,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.footer {
-  position: fixed;
-  bottom: 0;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  /* Adapte a cor de fundo conforme necessário */
-}
-
 .about-User {
   display: flex;
   justify-content: center;

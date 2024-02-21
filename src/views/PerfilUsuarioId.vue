@@ -111,29 +111,22 @@
             </div> -->
         </div>
       </div>
-
-      <footer class="footer is-0-desktop is-0-mobile" v-show="activeTab === 'music'">
-        <div class="content">
-          <PlayerMusic />
-        </div>
-      </footer>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import PlayerMusic from "@/components/PlayerMusic.vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline, mdiSendCircleOutline } from "@mdi/js";
 import { mapActions } from "vuex";
 
 import axios from "axios";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "PaginaPerfilID",
   components: {
-    PlayerMusic,
     SvgIcon,
   },
   data() {
@@ -165,7 +158,7 @@ export default defineComponent({
 
     const userId = this.$route.params.userId;
 
-    const response = await axios.get(`http://localhost:3333/api/usuario/${userId}`, {
+    const response = await axios.get(`${apiDomain}/api/usuario/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -201,18 +194,15 @@ export default defineComponent({
     async fetchComposicoes(userId: any, token: string) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:3333/api/composicoesUser/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiDomain}/api/composicoesUser/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuario/${composition.usuario_id}`,
+            `${apiDomain}/api/usuario/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -242,15 +232,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.footer {
-  position: fixed;
-  bottom: 0;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  background-color: #4f9ac4; /* Adapte a cor de fundo conforme necessário */
-}
-
 .about-User {
   display: flex;
   justify-content: center;

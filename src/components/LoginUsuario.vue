@@ -61,6 +61,7 @@
 import { defineComponent, ref } from "vue";
 import axios from "axios";
 import router from "@/router";
+import { apiDomain } from "@/config";
 // import { useStore } from "vuex";
 
 export default defineComponent({
@@ -73,7 +74,7 @@ export default defineComponent({
 
     const EnvioLogin = async () => {
       try {
-        const response = await axios.post("http://localhost:3333/api/login", {
+        const response = await axios.post(`${apiDomain}/api/login`, {
           email: email.value,
           password: password.value,
         });
@@ -146,10 +147,6 @@ export default defineComponent({
   color: #a2b8ca94;
   font-size: small;
   text-decoration: underline;
-}
-
-.notification {
-  background: aliceblue;
 }
 
 .login-button {

@@ -107,6 +107,7 @@
 import { defineComponent } from "vue";
 import router from "@/router";
 import axios from "axios";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "RegisterUsuario",
@@ -128,9 +129,7 @@ export default defineComponent({
 
   async mounted() {
     try {
-      const response = await axios.get(
-        "http://localhost:3333/api/generos"
-      );
+      const response = await axios.get(`${apiDomain}/api/generos`);
       this.genres = response.data;
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
@@ -151,16 +150,13 @@ export default defineComponent({
           imagem_perfil: null,
         };
 
-        const response = await fetch(
-          "http://localhost:3333/api/usuarios/cadastro",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-          }
-        );
+        const response = await fetch(`${apiDomain}/api/usuarios/cadastro`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
 
         const responseData = await response.json();
 
