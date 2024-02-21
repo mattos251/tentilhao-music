@@ -20,16 +20,11 @@
         <MusicPlaylistFeed :genero="genero" />
       </section>
     </div>
-
-    <section class="footer">
-      <PlayerMusic />
-    </section>
   </div>
 </template>
 
 <script lang="ts">
 import MusicPlaylistFeed from "@/components/MusicPlaylistFeed.vue";
-import PlayerMusic from "@/components/PlayerMusic.vue";
 import NavbarNavigation from "@/components/NavbarNavigation.vue";
 import { defineComponent } from "vue";
 
@@ -37,7 +32,6 @@ export default defineComponent({
   name: "PaginaFeed",
   components: {
     MusicPlaylistFeed,
-    PlayerMusic,
     NavbarNavigation,
   },
   data() {
@@ -61,15 +55,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.footer {
-  position: fixed;
-  bottom: 0;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  background-color: #4f9ac4; /* Adapte a cor de fundo conforme necessário */
-}
-
 .input-search {
   border-radius: 50px;
   height: 35px;

@@ -148,10 +148,6 @@ export default defineComponent({
   text-decoration: underline;
 }
 
-.notification {
-  background: aliceblue;
-}
-
 .login-button {
   margin-top: 10px;
   background-color: aliceblue;

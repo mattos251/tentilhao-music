@@ -61,7 +61,7 @@ export default defineComponent({
 .cards-lists {
   display: flex;
   width: 100%;
-  height: 75vh;
+  height: 65vh;
   cursor: pointer;
   overflow: auto;
 }

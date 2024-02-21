@@ -111,19 +111,12 @@
             </div> -->
         </div>
       </div>
-
-      <footer class="footer is-0-desktop is-0-mobile" v-show="activeTab === 'music'">
-        <div class="content">
-          <PlayerMusic />
-        </div>
-      </footer>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import PlayerMusic from "@/components/PlayerMusic.vue";
 import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiPlay, mdiDelete, mdiSquareEditOutline, mdiSendCircleOutline } from "@mdi/js";
 import { mapActions } from "vuex";
@@ -133,7 +126,6 @@ import axios from "axios";
 export default defineComponent({
   name: "PaginaPerfilID",
   components: {
-    PlayerMusic,
     SvgIcon,
   },
   data() {
@@ -242,15 +234,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.footer {
-  position: fixed;
-  bottom: 0;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  background-color: #4f9ac4; /* Adapte a cor de fundo conforme necessário */
-}
-
 .about-User {
   display: flex;
   justify-content: center;
