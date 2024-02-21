@@ -112,6 +112,7 @@ import {
 } from "firebase/storage";
 import axios from "axios";
 import { storage } from "../firebase";
+import { apiDomain } from "@/config";
 
 const selectedGenre = ref();
 const audioFile = ref<File | null>(null);
@@ -189,16 +190,12 @@ const submitComposition = async () => {
     };
 
     const token = localStorage.getItem("token");
-    await axios.post(
-      "http://localhost:3333/api/cadastro/ComposicaoUser",
-      compositionData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    await axios.post(`${apiDomain}/api/cadastro/ComposicaoUser`, compositionData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     loading.value = false;
     router.push({ path: "/perfil" });
@@ -209,9 +206,7 @@ const submitComposition = async () => {
 
 onMounted(async () => {
   try {
-    const [genresResponse] = await Promise.all([
-      axios.get("http://localhost:3333/api/generos"),
-    ]);
+    const [genresResponse] = await Promise.all([axios.get(`${apiDomain}/api/generos`)]);
     genres.value = genresResponse.data;
   } catch (error: any) {
     console.error("Erro ao obter generos:", error.message);

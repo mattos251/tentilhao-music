@@ -44,6 +44,7 @@ import SvgIcon from "@jamescoyle/vue-icon";
 import { mdiAccountBox, mdiPlay, mdiSendCircleOutline } from "@mdi/js";
 import axios from "axios";
 import { mapActions } from "vuex";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   nome: "MusicPlaylistFeed",
@@ -81,7 +82,7 @@ export default defineComponent({
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3333/api/composicoesGeneros/${this.genero}`,
+        `${apiDomain}/api/composicoesGeneros/${this.genero}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

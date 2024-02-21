@@ -107,6 +107,7 @@ import { useRouter } from "vue-router";
 //   uploadBytesResumable,
 // } from "firebase/storage";
 import axios from "axios";
+import { apiDomain } from "@/config";
 // import { storage } from "../firebase";
 
 const selectedGenre = ref(1);
@@ -197,7 +198,7 @@ const submitComposition = async () => {
 
     // Fazendo um pedido PUT
     await axios.put(
-      `http://localhost:3333/api/atualizar/Composicao/${compositionId}`,
+      `${apiDomain}/api/atualizar/Composicao/${compositionId}`,
       compositionData,
       {
         headers: {
@@ -217,7 +218,7 @@ const submitComposition = async () => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get("http://localhost:3333/api/generos");
+    const response = await axios.get(`${apiDomain}/api/generos`);
     genres.value = response.data;
   } catch (error: any) {
     console.error("Erro ao obter generos:", error.message);

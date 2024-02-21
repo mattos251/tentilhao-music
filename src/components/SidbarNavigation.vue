@@ -43,6 +43,7 @@
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import imagemPadrao from "@/assets/OIP.jpg";
+import { apiDomain } from "@/config";
 
 const imagem_padrao = ref(imagemPadrao);
 
@@ -63,14 +64,11 @@ const fetchUserData = async () => {
   usuario.value.userId = decodedToken.userId;
 
   try {
-    const response = await axios.get(
-      `http://localhost:3333/api/usuario/${usuario.value.userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${apiDomain}/api/usuario/${usuario.value.userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const userData = response.data;
     usuario.value.nome = userData.usuario.nome_completo;

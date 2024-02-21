@@ -122,6 +122,7 @@ import { mdiPlay, mdiDelete, mdiSquareEditOutline, mdiSendCircleOutline } from "
 import { mapActions } from "vuex";
 
 import axios from "axios";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "PaginaPerfilID",
@@ -157,7 +158,7 @@ export default defineComponent({
 
     const userId = this.$route.params.userId;
 
-    const response = await axios.get(`http://localhost:3333/api/usuario/${userId}`, {
+    const response = await axios.get(`${apiDomain}/api/usuario/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -193,18 +194,15 @@ export default defineComponent({
     async fetchComposicoes(userId: any, token: string) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:3333/api/composicoesUser/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiDomain}/api/composicoesUser/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuario/${composition.usuario_id}`,
+            `${apiDomain}/api/usuario/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

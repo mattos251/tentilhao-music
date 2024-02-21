@@ -73,6 +73,7 @@ import { mdiPlay, mdiDelete, mdiSquareEditOutline } from "@mdi/js";
 import axios from "axios";
 import { mapActions } from "vuex";
 import ModalUpdateComposicao from "./ModalUpdateComposicao.vue";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "MusicPlaylistFeed",
@@ -132,7 +133,7 @@ export default defineComponent({
           const token = localStorage.getItem("token");
 
           const response = await axios.delete(
-            `http://localhost:3333/api/deletar/Composicao/${compositionId}`,
+            `${apiDomain}/api/deletar/Composicao/${compositionId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -169,18 +170,15 @@ export default defineComponent({
     async fetchComposicoes(userId: number, token: string) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:3333/api/composicoesUser/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${apiDomain}/api/composicoesUser/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         for (const composition of response.data) {
           const userResponse = await axios.get(
-            `http://localhost:3333/api/usuario/${composition.usuario_id}`,
+            `${apiDomain}/api/usuario/${composition.usuario_id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

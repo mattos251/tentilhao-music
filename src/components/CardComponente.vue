@@ -20,6 +20,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+import { apiDomain } from "@/config";
 
 export default defineComponent({
   name: "CardComponent",
@@ -30,7 +31,7 @@ export default defineComponent({
   },
   async mounted() {
     try {
-      const response = await axios.get("http://localhost:3333/api/generos");
+      const response = await axios.get(`${apiDomain}/api/generos`);
       this.cards = response.data;
     } catch (error: any) {
       console.error("Erro ao obter generos:", error.message);
